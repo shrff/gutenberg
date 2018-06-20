@@ -93,10 +93,15 @@ export default compose( [
 			getSelectedBlock,
 			getInserterItems,
 		} = select( 'core/editor' );
+<<<<<<< HEAD
+		const insertionPoint = getBlockInsertionPoint();
+		const { rootClientId } = insertionPoint;
+=======
 		if ( ! insertionPoint ) {
 			insertionPoint = getBlockInsertionPoint();
 		}
-		const { rootClientId } = insertionPoint;
+		const { rootUID } = insertionPoint;
+>>>>>>> Try Layout Block Half Image Half Content
 		return {
 			title: getEditedPostAttribute( 'title' ),
 			insertionPoint,

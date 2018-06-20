@@ -90,10 +90,9 @@ class InnerBlocks extends Component {
 			isSmallScreen,
 			isSelectedBlockInRoot,
 			showWhenEmpty,
-			className,
 		} = this.props;
 
-		const classes = classnames( className, 'editor-inner-blocks', {
+		const classes = classnames( 'editor-inner-blocks', {
 			'has-overlay': isSmallScreen && ! isSelectedBlockInRoot,
 		} );
 
@@ -122,15 +121,25 @@ InnerBlocks = compose( [
 			getTemplateLock,
 			getBlockOrder,
 		} = select( 'core/editor' );
+<<<<<<< HEAD
 		const { clientId } = ownProps;
 		const parentClientId = getBlockRootClientId( clientId );
-		const blocksInside = getBlockOrder( clientId );
 		return {
 			isSelectedBlockInRoot: isBlockSelected( clientId ) || hasSelectedInnerBlock( clientId ),
 			block: getBlock( clientId ),
 			blockListSettings: getBlockListSettings( clientId ),
 			parentLock: getTemplateLock( parentClientId ),
+=======
+		const { uid } = ownProps;
+		const parentUID = getBlockRootUID( uid );
+		const blocksInside = getBlockOrder( uid );
+		return {
+			isSelectedBlockInRoot: isBlockSelected( uid ) || hasSelectedInnerBlock( uid ),
+			block: getBlock( uid ),
+			blockListSettings: getBlockListSettings( uid ),
+			parentLock: getTemplateLock( parentUID ),
 			isEmpty: blocksInside && blocksInside.length === 0,
+>>>>>>> Try Layout Block Half Image Half Content
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
