@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { createBlobURL } from '@wordpress/blob';
 import { createBlock } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
+import { getTextElements } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -93,9 +94,10 @@ export const settings = {
 				type: 'block',
 				blocks: [ 'core/audio' ],
 				transform: ( attributes ) => {
+					const captionProcessed = getTextElements( attributes.caption );
 					return createBlock( 'core/file', {
 						href: attributes.src,
-						fileName: attributes.caption && attributes.caption.join(),
+						fileName: captionProcessed && captionProcessed.join( '' ),
 						textLinkHref: attributes.src,
 						id: attributes.id,
 					} );
@@ -105,9 +107,10 @@ export const settings = {
 				type: 'block',
 				blocks: [ 'core/video' ],
 				transform: ( attributes ) => {
+					const captionProcessed = getTextElements( attributes.caption );
 					return createBlock( 'core/file', {
 						href: attributes.src,
-						fileName: attributes.caption && attributes.caption.join(),
+						fileName: captionProcessed && captionProcessed.join( '' ),
 						textLinkHref: attributes.src,
 						id: attributes.id,
 					} );
