@@ -26,6 +26,7 @@ import BlockHTMLConvertButton from './block-html-convert-button';
 import BlockUnknownConvertButton from './block-unknown-convert-button';
 import _BlockSettingsMenuFirstItem from './block-settings-menu-first-item';
 import withDeprecatedUniqueId from '../with-deprecated-unique-id';
+import _BlockSettingsMenuPluginsGroup from './block-settings-menu-plugins-group';
 
 export class BlockSettingsMenu extends Component {
 	constructor() {
@@ -127,6 +128,7 @@ export class BlockSettingsMenu extends Component {
 									itemsRole="menuitem"
 								/>
 							) }
+							<_BlockSettingsMenuPluginsGroup.Slot fillProps={ { clientIds, onClose } } />
 							<div className="editor-block-settings-menu__separator" />
 							{ count === 1 && (
 								<SharedBlockDeleteButton
