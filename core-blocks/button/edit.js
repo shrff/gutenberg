@@ -93,33 +93,33 @@ class ButtonEdit extends Component {
 						formattingControls={ [ 'bold', 'italic', 'strikethrough' ] }
 						className={ classnames(
 							'wp-block-button__link', {
-								'has-background': backgroundColor.value,
+								'has-background': backgroundColor.color,
 								[ backgroundColor.class ]: backgroundColor.class,
-								'has-text-color': textColor.value,
+								'has-text-color': textColor.color,
 								[ textColor.class ]: textColor.class,
 							}
 						) }
 						style={ {
-							backgroundColor: backgroundColor.value,
-							color: textColor.value,
+							backgroundColor: backgroundColor.color,
+							color: textColor.color,
 						} }
 						keepPlaceholderOnFocus
 					/>
 					<InspectorControls>
 						<PanelColor
-							colorValue={ backgroundColor.value }
+							colorValue={ backgroundColor.color }
 							title={ __( 'Background Color' ) }
 							onChange={ setBackgroundColor }
 						/>
 						<PanelColor
-							colorValue={ textColor.value }
+							colorValue={ textColor.color }
 							title={ __( 'Text Color' ) }
 							onChange={ setTextColor }
 						/>
 						{ this.nodeRef && <ContrastCheckerWithFallbackStyles
 							node={ this.nodeRef }
-							textColor={ textColor.value }
-							backgroundColor={ backgroundColor.value }
+							textColor={ textColor.color }
+							backgroundColor={ backgroundColor.color }
 							isLargeText={ true }
 						/> }
 					</InspectorControls>

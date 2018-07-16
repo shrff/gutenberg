@@ -18,6 +18,8 @@ Gutenberg's deprecation policy is intended to support backwards-compatibility fo
  - The Text Columns block has been removed. Please use the Columns block instead.
  - `InnerBlocks` grouped layout is removed. Use intermediary nested inner blocks instead. See Columns / Column block for reference implementation.
  - `RichText` explicit `element` format removed. Please use the compatible `children` format instead.
+ - `wp.editor.getColorName` has been removed. Please use `wp.editor.getColorObjectByValue` instead.
+ - `value` property in color objects passed by `wp.editor.withColors` has been removed. Please use color property instead.
 
 ## 3.4.0
 

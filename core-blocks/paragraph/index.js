@@ -236,20 +236,20 @@ class ParagraphBlock extends Component {
 						/>
 					</PanelBody>
 					<PanelColor
-						colorValue={ backgroundColor.value }
+						colorValue={ backgroundColor.color }
 						initialOpen={ false }
 						title={ __( 'Background Color' ) }
 						onChange={ setBackgroundColor }
 					/>
 					<PanelColor
-						colorValue={ textColor.value }
+						colorValue={ textColor.color }
 						initialOpen={ false }
 						title={ __( 'Text Color' ) }
 						onChange={ setTextColor }
 					/>
 					<ContrastChecker
-						textColor={ textColor.value }
-						backgroundColor={ backgroundColor.value }
+						textColor={ textColor.color }
+						backgroundColor={ backgroundColor.color }
 						{ ...{
 							fontSize,
 							fallbackBackgroundColor,
@@ -260,14 +260,14 @@ class ParagraphBlock extends Component {
 				<RichText
 					tagName="p"
 					className={ classnames( 'wp-block-paragraph', className, {
-						'has-background': backgroundColor.value,
+						'has-background': backgroundColor.color,
 						'has-drop-cap': dropCap,
 						[ backgroundColor.class ]: backgroundColor.class,
 						[ textColor.class ]: textColor.class,
 					} ) }
 					style={ {
-						backgroundColor: backgroundColor.value,
-						color: textColor.value,
+						backgroundColor: backgroundColor.color,
+						color: textColor.color,
 						fontSize: fontSize ? fontSize + 'px' : undefined,
 						textAlign: align,
 					} }

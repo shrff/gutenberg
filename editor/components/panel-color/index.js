@@ -14,12 +14,12 @@ import { ifCondition, compose } from '@wordpress/compose';
  */
 import ColorPalette from '../color-palette';
 import withColorContext from '../color-palette/with-color-context';
-import { getColorName } from '../colors';
+import { getColorObjectByValue } from '../colors';
 
 function PanelColor( { colors, title, colorValue, initialOpen, ...props } ) {
-	const colorName = getColorName( colors, colorValue );
+	const colorObject = getColorObjectByValue( colors, colorValue );
 	return (
-		<PanelColorComponent { ...{ title, colorName, colorValue, initialOpen } } >
+		<PanelColorComponent { ...{ title, colorName: colorObject && colorObject.name, colorValue, initialOpen } } >
 			<ColorPalette
 				value={ colorValue }
 				{ ...omit( props, [ 'disableCustomColors' ] ) }
