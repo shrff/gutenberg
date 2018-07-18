@@ -23,7 +23,7 @@ import {
 	getBlockSupport,
 	hasBlockSupport,
 	isSharedBlock,
-	registerBlockStyleVariation,
+	registerBlockStyle,
 } from '../registration';
 
 describe( 'blocks', () => {
@@ -596,14 +596,14 @@ describe( 'blocks', () => {
 		} );
 	} );
 
-	describe( 'registerBlockStyleVariation', () => {
+	describe( 'registerBlockStyle', () => {
 		afterEach( () => {
 			removeFilter( 'blocks.registerBlockType', 'my-plugin/block-without-styles/big' );
 			removeFilter( 'blocks.registerBlockType', 'my-plugin/block-without-styles/small' );
 		} );
 
 		it( 'should add styles', () => {
-			registerBlockStyleVariation( 'my-plugin/block-without-styles', { name: 'big', label: 'Big style' } );
+			registerBlockStyle( 'my-plugin/block-without-styles', { name: 'big', label: 'Big style' } );
 			const settings = registerBlockType( 'my-plugin/block-without-styles', defaultBlockSettings );
 
 			expect( settings.styles ).toEqual( [
@@ -612,8 +612,8 @@ describe( 'blocks', () => {
 		} );
 
 		it( 'should accumulate styles', () => {
-			registerBlockStyleVariation( 'my-plugin/block-without-styles', { name: 'small', label: 'Small style' } );
-			registerBlockStyleVariation( 'my-plugin/block-without-styles', { name: 'big', label: 'Big style' } );
+			registerBlockStyle( 'my-plugin/block-without-styles', { name: 'small', label: 'Small style' } );
+			registerBlockStyle( 'my-plugin/block-without-styles', { name: 'big', label: 'Big style' } );
 			const settings = registerBlockType( 'my-plugin/block-without-styles', {
 				...defaultBlockSettings,
 				styles: [ { name: 'normal', label: 'Normal style' } ],

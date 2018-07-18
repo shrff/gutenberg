@@ -40,6 +40,7 @@ export {
 	isSharedBlock,
 	getChildBlockNames,
 	hasChildBlocks,
+	registerBlockStyle,
 } from './registration';
 export {
 	isUnmodifiedDefaultBlock,
