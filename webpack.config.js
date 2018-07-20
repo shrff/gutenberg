@@ -104,7 +104,9 @@ const gutenbergPackages = [
 	'keycodes',
 	'plugins',
 	'shortcode',
+	'url',
 	'viewport',
+	'wordcount',
 ];
 
 const externals = {

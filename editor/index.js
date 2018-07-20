@@ -1,5 +1,3 @@
-import './store';
-import './hooks';
+export * from '../packages/editor/src';
 
-export * from './components';
-export * from './utils';
+import '../packages/editor/src/style.scss';
