@@ -6,45 +6,70 @@
         "attributes": {
             "value": [
                 {
-                    "children": {
-                        "type": "p",
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                            "children": [
-                                "Paragraph ",
-                                {
-                                    "type": "strong",
-                                    "key": "_domReact73",
-                                    "ref": null,
-                                    "props": {
-                                        "children": "one"
-                                    },
-                                    "_owner": null,
-                                    "_store": {}
-                                }
-                            ]
-                        },
-                        "_owner": null,
-                        "_store": {}
-                    }
+                    "formats": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        [
+                            {
+                                "type": "strong"
+                            }
+                        ],
+                        [
+                            {
+                                "type": "strong"
+                            }
+                        ],
+                        [
+                            {
+                                "type": "strong"
+                            }
+                        ]
+                    ],
+                    "text": "Paragraph one"
                 },
                 {
-                    "children": {
-                        "type": "p",
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                            "children": "Paragraph two"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                    }
+                    "formats": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ],
+                    "text": "Paragraph two"
                 }
             ],
-            "citation": [
-                "by whomever"
-            ],
+            "citation": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "by whomever"
+            },
             "align": "none"
         },
         "innerBlocks": [],

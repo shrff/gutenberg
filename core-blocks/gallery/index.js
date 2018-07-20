@@ -50,8 +50,8 @@ const blockAttributes = {
 				attribute: 'data-id',
 			},
 			caption: {
-				type: 'array',
-				source: 'children',
+				type: 'object',
+				source: 'rich-text',
 				selector: 'figcaption',
 			},
 		},

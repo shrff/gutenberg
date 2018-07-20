@@ -5,9 +5,44 @@
         "isValid": true,
         "attributes": {
             "url": "https://photobucket.com/",
-            "caption": [
-                "Embedded content from photobucket"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from photobucket"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-photobucket wp-block-embed\">\n    https://photobucket.com/\n    <figcaption>Embedded content from photobucket</figcaption>\n</figure>"

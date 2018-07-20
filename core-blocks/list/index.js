@@ -51,10 +51,10 @@ const schema = {
 		default: false,
 	},
 	values: {
-		type: 'array',
-		source: 'children',
+		type: 'object',
+		source: 'rich-text',
 		selector: 'ol,ul',
-		default: [],
+		multiline: 'li',
 	},
 };
 
@@ -121,7 +121,7 @@ export const settings = {
 				regExp: /^[*-]\s/,
 				transform: ( { content } ) => {
 					return createBlock( 'core/list', {
-						values: [ <li key="1">{ content }</li> ],
+						values: [ content ],
 					} );
 				},
 			},
@@ -131,7 +131,7 @@ export const settings = {
 				transform: ( { content } ) => {
 					return createBlock( 'core/list', {
 						ordered: true,
-						values: [ <li key="1">{ content }</li> ],
+						values: [ content ],
 					} );
 				},
 			},
@@ -370,7 +370,7 @@ export const settings = {
 		const tagName = ordered ? 'ol' : 'ul';
 
 		return (
-			<RichText.Content tagName={ tagName } value={ values } />
+			<RichText.Content tagName={ tagName } value={ values } multiline="li" />
 		);
 	},
 };

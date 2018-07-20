@@ -39,8 +39,8 @@ const blockAttributes = {
 		default: '',
 	},
 	caption: {
-		type: 'array',
-		source: 'children',
+		type: 'object',
+		source: 'rich-text',
 		selector: 'figcaption',
 	},
 	href: {
@@ -220,7 +220,7 @@ export const settings = {
 		return (
 			<figure className={ classes }>
 				{ href ? <a href={ href }>{ image }</a> : image }
-				{ caption && caption.length > 0 && <RichText.Content tagName="figcaption" value={ caption } /> }
+				{ ! RichText.isEmpty( caption ) && <RichText.Content tagName="figcaption" value={ caption } /> }
 			</figure>
 		);
 	},
@@ -244,7 +244,7 @@ export const settings = {
 				return (
 					<figure className={ align ? `align${ align }` : null } >
 						{ href ? <a href={ href }>{ image }</a> : image }
-						{ caption && caption.length > 0 && <RichText.Content tagName="figcaption" value={ caption } /> }
+						{ ! RichText.isEmpty( caption ) && <RichText.Content tagName="figcaption" value={ caption } /> }
 					</figure>
 				);
 			},
@@ -267,7 +267,7 @@ export const settings = {
 				return (
 					<figure className={ align ? `align${ align }` : null } style={ figureStyle }>
 						{ href ? <a href={ href }>{ image }</a> : image }
-						{ caption && caption.length > 0 && <RichText.Content tagName="figcaption" value={ caption } /> }
+						{ ! RichText.isEmpty( caption ) && <RichText.Content tagName="figcaption" value={ caption } /> }
 					</figure>
 				);
 			},

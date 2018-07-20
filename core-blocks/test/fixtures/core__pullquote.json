@@ -6,21 +6,59 @@
         "attributes": {
             "value": [
                 {
-                    "children": {
-                        "type": "p",
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                            "children": "Testing pullquote block..."
-                        },
-                        "_owner": null,
-                        "_store": {}
-                    }
+                    "formats": [
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                    ],
+                    "text": "Testing pullquote block..."
                 }
             ],
-            "citation": [
-                "...with a caption"
-            ],
+            "citation": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "...with a caption"
+            },
             "align": "none"
         },
         "innerBlocks": [],

@@ -5,9 +5,42 @@
         "isValid": true,
         "attributes": {
             "url": "https://wordpress.com/",
-            "caption": [
-                "Embedded content from WordPress"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from WordPress"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-wordpress wp-block-embed\">\n    https://wordpress.com/\n    <figcaption>Embedded content from WordPress</figcaption>\n</figure>"

@@ -34,8 +34,8 @@ export const settings = {
 			attribute: 'autoplay',
 		},
 		caption: {
-			type: 'array',
-			source: 'children',
+			type: 'object',
+			source: 'rich-text',
 			selector: 'figcaption',
 		},
 		controls: {
@@ -87,7 +87,7 @@ export const settings = {
 						muted={ muted }
 					/>
 				) }
-				{ caption && caption.length > 0 && (
+				{ ! RichText.isEmpty( caption ) && (
 					<RichText.Content tagName="figcaption" value={ caption } />
 				) }
 			</figure>

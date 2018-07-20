@@ -13,6 +13,7 @@ import {
 } from '@wordpress/components';
 import { ESCAPE, LEFT, RIGHT, UP, DOWN, BACKSPACE, ENTER, displayShortcut } from '@wordpress/keycodes';
 import { prependHTTP } from '@wordpress/url';
+import { richTextStructure } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -28,24 +29,28 @@ const FORMATTING_CONTROLS = [
 		title: __( 'Bold' ),
 		shortcut: displayShortcut.primary( 'b' ),
 		format: 'bold',
+		selector: 'strong',
 	},
 	{
 		icon: 'editor-italic',
 		title: __( 'Italic' ),
 		shortcut: displayShortcut.primary( 'i' ),
 		format: 'italic',
+		selector: 'em',
 	},
 	{
 		icon: 'editor-strikethrough',
 		title: __( 'Strikethrough' ),
 		shortcut: displayShortcut.access( 'd' ),
 		format: 'strikethrough',
+		selector: 'del',
 	},
 	{
 		icon: 'admin-links',
 		title: __( 'Link' ),
 		shortcut: displayShortcut.primary( 'k' ),
 		format: 'link',
+		selector: 'a',
 	},
 ];
 
@@ -118,9 +123,16 @@ class FormatToolbar extends Component {
 
 	toggleFormat( format ) {
 		return () => {
-			this.props.onChange( {
-				[ format ]: ! this.props.formats[ format ],
-			} );
+			const { record } = this.props;
+			let newRecord;
+
+			if ( richTextStructure.getActiveFormat( record, format.type ) ) {
+				newRecord = richTextStructure.removeFormat( record, format.type );
+			} else {
+				newRecord = richTextStructure.applyFormat( record, format );
+			}
+
+			this.props.onChange( newRecord );
 		};
 	}
 
@@ -140,65 +152,86 @@ class FormatToolbar extends Component {
 	}
 
 	addLink() {
+		const newRecord = richTextStructure.applyFormat( this.props.record, {
+			type: 'a',
+			attributes: {
+				href: '',
+			},
+		} );
+
+		this.props.onChange( newRecord );
 		this.setState( { linkValue: '' } );
-		this.props.onChange( { link: { isAdding: true } } );
 	}
 
 	dropLink() {
-		this.props.onChange( { link: null } );
+		const newRecord = richTextStructure.removeFormat( this.props.record, 'a' );
+
+		this.props.onChange( newRecord );
 		this.setState( { linkValue: '' } );
 	}
 
 	editLink( event ) {
+		const format = richTextStructure.getActiveFormat( this.props.record, 'a' );
+
+		this.setState( { linkValue: format.attributes.href, isEditing: true } );
 		event.preventDefault();
-		this.props.onChange( { link: { ...this.props.formats.link, isAdding: true } } );
-		this.setState( { linkValue: this.props.formats.link.value } );
 	}
 
 	submitLink( event ) {
-		event.preventDefault();
-		const value = prependHTTP( this.state.linkValue );
-		this.props.onChange( { link: {
-			isAdding: false,
-			target: this.state.opensInNewWindow ? '_blank' : null,
-			rel: this.state.opensInNewWindow ? 'noreferrer noopener' : null,
-			value,
-		} } );
+		const { linkValue, opensInNewWindow } = this.state;
+		const { record } = this.props;
+		const href = prependHTTP( linkValue );
+		const format = {
+			type: 'a',
+			attributes: {
+				href,
+			},
+		};
 
-		this.setState( { linkValue: value } );
-		if ( ! this.props.formats.link.value ) {
-			this.props.speak( __( 'Link added.' ), 'assertive' );
+		if ( opensInNewWindow ) {
+			format.attributes.target = '_blank';
+			format.attributes.rel = 'noreferrer noopener';
 		}
+
+		this.props.onChange( richTextStructure.applyFormat( record, format ) );
+
+		this.setState( { linkValue: href } );
+
+		// if ( ! this.props.formats.link.value ) {
+		// 	this.props.speak( __( 'Link added.' ), 'assertive' );
+		// }
+
+		event.preventDefault();
 	}
 
-	isFormatActive( format ) {
-		return this.props.formats[ format ] && this.props.formats[ format ].isActive;
+	getActiveFormat( formatType ) {
+		return richTextStructure.getActiveFormat( this.props.record, formatType );
 	}
 
 	render() {
-		const { formats, enabledControls = DEFAULT_CONTROLS, customControls = [], selectedNodeId } = this.props;
-		const { linkValue, settingsVisible, opensInNewWindow } = this.state;
-		const isAddingLink = formats.link && formats.link.isAdding;
+		const { enabledControls = DEFAULT_CONTROLS, customControls = [], selectedNodeId } = this.props;
+		const { linkValue, settingsVisible, opensInNewWindow, isEditing } = this.state;
+		const link = this.getActiveFormat( 'a' );
+
+		const isEditingLink = isEditing || ( link && ( ! link.attributes || ! link.attributes.href ) );
 
 		const toolbarControls = FORMATTING_CONTROLS.concat( customControls )
 			.filter( ( control ) => enabledControls.indexOf( control.format ) !== -1 )
 			.map( ( control ) => {
 				if ( control.format === 'link' ) {
-					const isFormatActive = this.isFormatActive( 'link' );
-					const isActive = isFormatActive || isAddingLink;
 					return {
 						...control,
-						icon: isFormatActive ? 'editor-unlink' : 'admin-links', // TODO: Need proper unlink icon
-						title: isFormatActive ? __( 'Unlink' ) : __( 'Link' ),
-						onClick: isActive ? this.dropLink : this.addLink,
-						isActive,
+						icon: link ? 'editor-unlink' : 'admin-links', // TODO: Need proper unlink icon
+						title: link ? __( 'Unlink' ) : __( 'Link' ),
+						onClick: link ? this.dropLink : this.addLink,
+						isActive: !! link,
 					};
 				}
 
 				return {
 					...control,
-					onClick: this.toggleFormat( control.format ),
-					isActive: this.isFormatActive( control.format ),
+					onClick: this.toggleFormat( { type: control.selector } ),
+					isActive: !! this.getActiveFormat( control.selector ),
 				};
 			} );
 
@@ -215,15 +248,15 @@ class FormatToolbar extends Component {
 			<div className="editor-format-toolbar">
 				<Toolbar controls={ toolbarControls } />
 
-				{ ( isAddingLink || formats.link ) && (
+				{ link && (
 					<Fill name="RichText.Siblings">
 						<PositionedAtSelection className="editor-format-toolbar__link-container">
 							<Popover
 								position="bottom center"
-								focusOnMount={ isAddingLink ? 'firstElement' : false }
+								focusOnMount={ isEditingLink ? 'firstElement' : false }
 								key={ selectedNodeId /* Used to force rerender on change */ }
 							>
-								{ isAddingLink && (
+								{ isEditingLink && (
 								// Disable reason: KeyPress must be suppressed so the block doesn't hide the toolbar
 								/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 									<form
@@ -247,7 +280,7 @@ class FormatToolbar extends Component {
 								/* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
 								) }
 
-								{ formats.link && ! isAddingLink && (
+								{ ! isEditingLink && (
 								// Disable reason: KeyPress must be suppressed so the block doesn't hide the toolbar
 								/* eslint-disable jsx-a11y/no-static-element-interactions */
 									<div
@@ -257,10 +290,10 @@ class FormatToolbar extends Component {
 										<div className="editor-format-toolbar__link-modal-line">
 											<a
 												className="editor-format-toolbar__link-value"
-												href={ formats.link.value }
+												href={ link.attributes.href }
 												target="_blank"
 											>
-												{ formats.link.value && filterURLForDisplay( decodeURI( formats.link.value ) ) }
+												{ link.attributes.href && filterURLForDisplay( decodeURI( link.attributes.href ) ) }
 											</a>
 											<IconButton icon="edit" label={ __( 'Edit' ) } onClick={ this.editLink } />
 											<IconButton

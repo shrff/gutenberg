@@ -5,9 +5,40 @@
         "isValid": true,
         "attributes": {
             "url": "https://animoto.com/",
-            "caption": [
-                "Embedded content from animoto"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from animoto"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-animoto wp-block-embed\">\n    https://animoto.com/\n    <figcaption>Embedded content from animoto</figcaption>\n</figure>"

@@ -5,9 +5,45 @@
         "isValid": true,
         "attributes": {
             "url": "https://wordpress.tv/",
-            "caption": [
-                "Embedded content from wordpress-tv"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from wordpress-tv"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-wordpress-tv wp-block-embed\">\n    https://wordpress.tv/\n    <figcaption>Embedded content from wordpress-tv</figcaption>\n</figure>"

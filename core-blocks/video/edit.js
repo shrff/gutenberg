@@ -134,7 +134,7 @@ class VideoEdit extends Component {
 				</InspectorControls>
 				<figure className={ className }>
 					<video controls src={ src } />
-					{ ( ( caption && caption.length ) || !! isSelected ) && (
+					{ ( ! RichText.isEmpty( caption ) || isSelected ) && (
 						<RichText
 							tagName="figcaption"
 							placeholder={ __( 'Write caption…' ) }

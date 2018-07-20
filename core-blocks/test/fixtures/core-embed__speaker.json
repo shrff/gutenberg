@@ -5,9 +5,40 @@
         "isValid": true,
         "attributes": {
             "url": "https://speaker.com/",
-            "caption": [
-                "Embedded content from speaker"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from speaker"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-speaker wp-block-embed\">\n    https://speaker.com/\n    <figcaption>Embedded content from speaker</figcaption>\n</figure>"

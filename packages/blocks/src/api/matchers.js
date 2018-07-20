@@ -1,15 +1,14 @@
 /**
  * WordPress dependencies
  */
-import { createElement } from '@wordpress/element';
+import { create } from './rich-text-structure';
 
 /**
  * External dependencies
  */
-import { nodeListToReact, nodeToReact } from 'dom-react';
 export { attr, prop, html, text, query } from 'hpq';
 
-export const children = ( selector ) => {
+export const children = ( selector, multiline ) => {
 	return ( domNode ) => {
 		let match = domNode;
 
@@ -17,11 +16,7 @@ export const children = ( selector ) => {
 			match = domNode.querySelector( selector );
 		}
 
-		if ( match ) {
-			return nodeListToReact( match.childNodes || [], createElement );
-		}
-
-		return [];
+		return create( match, multiline );
 	};
 };
 
@@ -33,6 +28,6 @@ export const node = ( selector ) => {
 			match = domNode.querySelector( selector );
 		}
 
-		return nodeToReact( match, createElement );
+		return create( match );
 	};
 };

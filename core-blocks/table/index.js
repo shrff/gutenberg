@@ -68,15 +68,10 @@ export const settings = {
 
 	attributes: {
 		content: {
-			type: 'array',
-			source: 'children',
+			type: 'object',
+			source: 'rich-text',
 			selector: 'table',
-			default: [
-				<tbody key="1">
-					<tr><td><br /></td><td><br /></td></tr>
-					<tr><td><br /></td><td><br /></td></tr>
-				</tbody>,
-			],
+			multiline: [ 'th', 'td' ],
 		},
 		align: {
 			type: 'string',

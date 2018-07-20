@@ -5,9 +5,40 @@
         "isValid": true,
         "attributes": {
             "url": "https://smugmug.com/",
-            "caption": [
-                "Embedded content from smugmug"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from smugmug"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-smugmug wp-block-embed\">\n    https://smugmug.com/\n    <figcaption>Embedded content from smugmug</figcaption>\n</figure>"

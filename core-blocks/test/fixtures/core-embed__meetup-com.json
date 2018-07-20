@@ -5,9 +5,43 @@
         "isValid": true,
         "attributes": {
             "url": "https://meetup.com/",
-            "caption": [
-                "Embedded content from meetup-com"
-            ]
+            "caption": {
+                "formats": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "text": "Embedded content from meetup-com"
+            }
         },
         "innerBlocks": [],
         "originalContent": "<figure class=\"wp-block-embed-meetup-com wp-block-embed\">\n    https://meetup.com/\n    <figcaption>Embedded content from meetup-com</figcaption>\n</figure>"
