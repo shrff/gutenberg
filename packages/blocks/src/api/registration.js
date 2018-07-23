@@ -10,6 +10,7 @@ import { get, isFunction, some } from 'lodash';
  */
 import { applyFilters } from '@wordpress/hooks';
 import { select, dispatch } from '@wordpress/data';
+import deprecated from '@wordpress/deprecated';
 
 /**
  * Internal dependencies
@@ -294,6 +295,15 @@ export function getBlockSupport( nameOrType, feature, defaultSupports ) {
  */
 export function hasBlockSupport( nameOrType, feature, defaultSupports ) {
 	return !! getBlockSupport( nameOrType, feature, defaultSupports );
+}
+
+export function isSharedBlock( blockOrType ) {
+	deprecated( 'wp.blocks.isSharedBlock', {
+		version: 3.6,
+		alternative: 'wp.blocks.isSavedBlock',
+		plugin: 'Gutenberg',
+	} );
+	return isSavedBlock( blockOrType );
 }
 
 /**
