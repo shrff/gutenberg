@@ -45,7 +45,7 @@ describe( 'Saved Blocks', () => {
 
 		// Convert block to a saved block
 		await page.click( 'button[aria-label="More Options"]' );
-		const convertButton = await page.waitForXPath( '//button[text()="Convert to Saved Block"]' );
+		const convertButton = await page.waitForXPath( '//button[text()="Create a Saved Block"]' );
 		await convertButton.click();
 
 		// Wait for creation to finish
@@ -91,7 +91,7 @@ describe( 'Saved Blocks', () => {
 
 		// Convert block to a saved block
 		await page.click( 'button[aria-label="More Options"]' );
-		const convertButton = await page.waitForXPath( '//button[text()="Convert to Saved Block"]' );
+		const convertButton = await page.waitForXPath( '//button[text()="Create a Saved Block"]' );
 		await convertButton.click();
 
 		// Wait for creation to finish

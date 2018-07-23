@@ -33,7 +33,7 @@ export function SavedBlockConvertButton( {
 					onClick={ onConvertToSaved }
 					role={ itemsRole }
 				>
-					{ __( 'Convert to Saved Block' ) }
+					{ __( 'Create a Saved Block' ) }
 				</IconButton>
 			) }
 			{ ! isStaticBlock && (
@@ -61,7 +61,7 @@ export default compose( [
 		}
 
 		return {
-			// Hide 'Convert to Saved Block' on Classic blocks. Showing it causes a
+			// Hide 'Create a Saved Block' on Classic blocks. Showing it causes a
 			// confusing UX, because of its similarity to the 'Convert to Blocks' button.
 			isVisible: block.name !== getFallbackBlockName(),
 			isStaticBlock: ! isSavedBlock( block ) || ! getSavedBlock( block.attributes.ref ),

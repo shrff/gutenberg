@@ -26,7 +26,7 @@ describe( 'SavedBlockConvertButton', () => {
 			/>
 		);
 		const button = wrapper.find( 'IconButton' ).first();
-		expect( button.children().text() ).toBe( 'Convert to Saved Block' );
+		expect( button.children().text() ).toBe( 'Create a Saved Block' );
 		button.simulate( 'click' );
 		expect( onConvert ).toHaveBeenCalled();
 	} );
