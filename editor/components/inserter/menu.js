@@ -25,7 +25,7 @@ import {
 	withSpokenMessages,
 	PanelBody,
 } from '@wordpress/components';
-import { getCategories, isSharedBlock } from '@wordpress/blocks';
+import { getCategories, isSavedBlock } from '@wordpress/blocks';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { withInstanceId, compose, withSafeTimeout } from '@wordpress/compose';
 
@@ -65,7 +65,7 @@ export class InserterMenu extends Component {
 			filterValue: '',
 			hoveredItem: null,
 			suggestedItems: [],
-			sharedItems: [],
+			savedItems: [],
 			itemsPerCategory: {},
 			openPanels: [ 'suggested' ],
 		};
@@ -77,7 +77,7 @@ export class InserterMenu extends Component {
 
 	componentDidMount() {
 		// This could be replaced by a resolver.
-		this.props.fetchSharedBlocks();
+		this.props.fetchSavedBlocks();
 		this.filter();
 	}
 
@@ -147,13 +147,13 @@ export class InserterMenu extends Component {
 			suggestedItems = filter( items, ( item ) => item.utility > 0 ).slice( 0, maxSuggestedItems );
 		}
 
-		const sharedItems = filter( filteredItems, { category: 'shared' } );
+		const savedItems = filter( filteredItems, { category: 'saved' } );
 
 		const getCategoryIndex = ( item ) => {
 			return findIndex( getCategories(), ( category ) => category.slug === item.category );
 		};
 		const itemsPerCategory = flow(
-			( itemList ) => filter( itemList, ( item ) => item.category !== 'shared' ),
+			( itemList ) => filter( itemList, ( item ) => item.category !== 'saved' ),
 			( itemList ) => sortBy( itemList, getCategoryIndex ),
 			( itemList ) => groupBy( itemList, 'category' )
 		)( filteredItems );
@@ -162,8 +162,8 @@ export class InserterMenu extends Component {
 		if ( filterValue !== this.state.filterValue ) {
 			if ( ! filterValue ) {
 				openPanels = [ 'suggested' ];
-			} else if ( sharedItems.length ) {
-				openPanels = [ 'shared' ];
+			} else if ( savedItems.length ) {
+				openPanels = [ 'saved' ];
 			} else if ( filteredItems.length ) {
 				const firstCategory = find( getCategories(), ( { slug } ) => itemsPerCategory[ slug ] && itemsPerCategory[ slug ].length );
 				openPanels = [ firstCategory.slug ];
@@ -175,7 +175,7 @@ export class InserterMenu extends Component {
 			childItems,
 			filterValue,
 			suggestedItems,
-			sharedItems,
+			savedItems,
 			itemsPerCategory,
 			openPanels,
 		} );
@@ -183,7 +183,7 @@ export class InserterMenu extends Component {
 
 	render() {
 		const { instanceId, onSelect, rootClientId } = this.props;
-		const { childItems, filterValue, hoveredItem, suggestedItems, sharedItems, itemsPerCategory, openPanels } = this.state;
+		const { childItems, filterValue, hoveredItem, suggestedItems, savedItems, itemsPerCategory, openPanels } = this.state;
 		const isPanelOpen = ( panel ) => openPanels.indexOf( panel ) !== -1;
 		const isSearching = !! filterValue;
 
@@ -249,23 +249,23 @@ export class InserterMenu extends Component {
 							</PanelBody>
 						);
 					} ) }
-					{ !! sharedItems.length && (
+					{ !! savedItems.length && (
 						<PanelBody
-							title={ __( 'Shared' ) }
-							opened={ isPanelOpen( 'shared' ) }
-							onToggle={ this.onTogglePanel( 'shared' ) }
+							title={ __( 'Saved' ) }
+							opened={ isPanelOpen( 'saved' ) }
+							onToggle={ this.onTogglePanel( 'saved' ) }
 							icon="controls-repeat"
-							ref={ this.bindPanel( 'shared' ) }
+							ref={ this.bindPanel( 'saved' ) }
 						>
-							<BlockTypesList items={ sharedItems } onSelect={ onSelect } onHover={ this.onHover } />
+							<BlockTypesList items={ savedItems } onSelect={ onSelect } onHover={ this.onHover } />
 						</PanelBody>
 					) }
-					{ isEmpty( suggestedItems ) && isEmpty( sharedItems ) && isEmpty( itemsPerCategory ) && (
+					{ isEmpty( suggestedItems ) && isEmpty( savedItems ) && isEmpty( itemsPerCategory ) && (
 						<p className="editor-inserter__no-results">{ __( 'No blocks found.' ) }</p>
 					) }
 				</div>
 
-				{ hoveredItem && isSharedBlock( hoveredItem ) &&
+				{ hoveredItem && isSavedBlock( hoveredItem ) &&
 					<BlockPreview name={ hoveredItem.name } attributes={ hoveredItem.initialAttributes } />
 				}
 			</div>
@@ -288,7 +288,7 @@ export default compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
-		fetchSharedBlocks: dispatch( 'core/editor' ).fetchSharedBlocks,
+		fetchSavedBlocks: dispatch( 'core/editor' ).fetchSavedBlocks,
 		showInsertionPoint: dispatch( 'core/editor' ).showInsertionPoint,
 		hideInsertionPoint: dispatch( 'core/editor' ).hideInsertionPoint,
 	} ) ),

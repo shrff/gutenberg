@@ -33,7 +33,7 @@ import {
 	provisionalBlockClientId,
 	blocksMode,
 	isInsertionPointVisible,
-	sharedBlocks,
+	savedBlocks,
 	template,
 	blockListSettings,
 	autosave,
@@ -493,7 +493,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should update the shared block reference if the temporary id is swapped', () => {
+		it( 'should update the saved block reference if the temporary id is swapped', () => {
 			const original = editor( undefined, {
 				type: 'RESET_BLOCKS',
 				blocks: [ {
@@ -508,7 +508,7 @@ describe( 'state', () => {
 			} );
 
 			const state = editor( deepFreeze( original ), {
-				type: 'SAVE_SHARED_BLOCK_SUCCESS',
+				type: 'SAVE_SAVED_BLOCK_SUCCESS',
 				id: 'random-clientId',
 				updatedId: 3,
 			} );
@@ -1646,7 +1646,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should remove recorded shared blocks that are deleted', () => {
+		it( 'should remove recorded saved blocks that are deleted', () => {
 			const initialState = {
 				insertUsage: {
 					'core/block/123': {
@@ -1658,7 +1658,7 @@ describe( 'state', () => {
 			};
 
 			const state = preferences( deepFreeze( initialState ), {
-				type: 'REMOVE_SHARED_BLOCK',
+				type: 'REMOVE_SAVED_BLOCK',
 				id: 123,
 			} );
 
@@ -1799,7 +1799,7 @@ describe( 'state', () => {
 		const PROVISIONAL_UPDATE_ACTION_TYPES = [
 			'UPDATE_BLOCK_ATTRIBUTES',
 			'UPDATE_BLOCK',
-			'CONVERT_BLOCK_TO_SHARED',
+			'CONVERT_BLOCK_TO_SAVED',
 		];
 
 		const PROVISIONAL_REPLACE_ACTION_TYPES = [
@@ -1911,9 +1911,9 @@ describe( 'state', () => {
 		} );
 	} );
 
-	describe( 'sharedBlocks()', () => {
+	describe( 'savedBlocks()', () => {
 		it( 'should start out empty', () => {
-			const state = sharedBlocks( undefined, {} );
+			const state = savedBlocks( undefined, {} );
 			expect( state ).toEqual( {
 				data: {},
 				isFetching: {},
@@ -1921,11 +1921,11 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should add received shared blocks', () => {
-			const state = sharedBlocks( {}, {
-				type: 'RECEIVE_SHARED_BLOCKS',
+		it( 'should add received saved blocks', () => {
+			const state = savedBlocks( {}, {
+				type: 'RECEIVE_SAVED_BLOCKS',
 				results: [ {
-					sharedBlock: {
+					savedBlock: {
 						id: 123,
 						title: 'My cool block',
 					},
@@ -1944,7 +1944,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should update a shared block', () => {
+		it( 'should update a saved block', () => {
 			const initialState = {
 				data: {
 					123: { clientId: '', title: '' },
@@ -1953,8 +1953,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'UPDATE_SHARED_BLOCK_TITLE',
+			const state = savedBlocks( initialState, {
+				type: 'UPDATE_SAVED_BLOCK_TITLE',
 				id: 123,
 				title: 'My block',
 			} );
@@ -1968,17 +1968,17 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should update the shared block\'s id if it was temporary', () => {
+		it( 'should update the saved block\'s id if it was temporary', () => {
 			const initialState = {
 				data: {
-					shared1: { clientId: '', title: '' },
+					saved1: { clientId: '', title: '' },
 				},
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'SAVE_SHARED_BLOCK_SUCCESS',
-				id: 'shared1',
+			const state = savedBlocks( initialState, {
+				type: 'SAVE_SAVED_BLOCK_SUCCESS',
+				id: 'saved1',
 				updatedId: 123,
 			} );
 
@@ -1991,7 +1991,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should remove a shared block', () => {
+		it( 'should remove a saved block', () => {
 			const id = 123;
 			const initialState = {
 				data: {
@@ -2009,8 +2009,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( deepFreeze( initialState ), {
-				type: 'REMOVE_SHARED_BLOCK',
+			const state = savedBlocks( deepFreeze( initialState ), {
+				type: 'REMOVE_SAVED_BLOCK',
 				id,
 			} );
 
@@ -2021,7 +2021,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should indicate that a shared block is fetching', () => {
+		it( 'should indicate that a saved block is fetching', () => {
 			const id = 123;
 			const initialState = {
 				data: {},
@@ -2029,8 +2029,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'FETCH_SHARED_BLOCKS',
+			const state = savedBlocks( initialState, {
+				type: 'FETCH_SAVED_BLOCKS',
 				id,
 			} );
 
@@ -2043,7 +2043,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should stop indicating that a shared block is saving when the fetch succeeded', () => {
+		it( 'should stop indicating that a saved block is saving when the fetch succeeded', () => {
 			const id = 123;
 			const initialState = {
 				data: {
@@ -2055,8 +2055,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'FETCH_SHARED_BLOCKS_SUCCESS',
+			const state = savedBlocks( initialState, {
+				type: 'FETCH_SAVED_BLOCKS_SUCCESS',
 				id,
 				updatedId: id,
 			} );
@@ -2070,7 +2070,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should stop indicating that a shared block is fetching when there is an error', () => {
+		it( 'should stop indicating that a saved block is fetching when there is an error', () => {
 			const id = 123;
 			const initialState = {
 				data: {},
@@ -2080,8 +2080,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'FETCH_SHARED_BLOCKS_FAILURE',
+			const state = savedBlocks( initialState, {
+				type: 'FETCH_SAVED_BLOCKS_FAILURE',
 				id,
 			} );
 
@@ -2092,7 +2092,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should indicate that a shared block is saving', () => {
+		it( 'should indicate that a saved block is saving', () => {
 			const id = 123;
 			const initialState = {
 				data: {},
@@ -2100,8 +2100,8 @@ describe( 'state', () => {
 				isSaving: {},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'SAVE_SHARED_BLOCK',
+			const state = savedBlocks( initialState, {
+				type: 'SAVE_SAVED_BLOCK',
 				id,
 			} );
 
@@ -2114,7 +2114,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should stop indicating that a shared block is saving when the save succeeded', () => {
+		it( 'should stop indicating that a saved block is saving when the save succeeded', () => {
 			const id = 123;
 			const initialState = {
 				data: {
@@ -2126,8 +2126,8 @@ describe( 'state', () => {
 				},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'SAVE_SHARED_BLOCK_SUCCESS',
+			const state = savedBlocks( initialState, {
+				type: 'SAVE_SAVED_BLOCK_SUCCESS',
 				id,
 				updatedId: id,
 			} );
@@ -2141,7 +2141,7 @@ describe( 'state', () => {
 			} );
 		} );
 
-		it( 'should stop indicating that a shared block is saving when there is an error', () => {
+		it( 'should stop indicating that a saved block is saving when there is an error', () => {
 			const id = 123;
 			const initialState = {
 				data: {},
@@ -2151,8 +2151,8 @@ describe( 'state', () => {
 				},
 			};
 
-			const state = sharedBlocks( initialState, {
-				type: 'SAVE_SHARED_BLOCK_FAILURE',
+			const state = savedBlocks( initialState, {
+				type: 'SAVE_SAVED_BLOCK_FAILURE',
 				id,
 			} );
 

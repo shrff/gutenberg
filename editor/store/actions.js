@@ -596,86 +596,86 @@ export const createErrorNotice = partial( createNotice, 'error' );
 export const createWarningNotice = partial( createNotice, 'warning' );
 
 /**
- * Returns an action object used to fetch a single shared block or all shared
+ * Returns an action object used to fetch a single saved block or all saved
  * blocks from the REST API into the store.
  *
- * @param {?string} id If given, only a single shared block with this ID will
+ * @param {?string} id If given, only a single saved block with this ID will
  *                     be fetched.
  *
  * @return {Object} Action object.
  */
-export function fetchSharedBlocks( id ) {
+export function fetchSavedBlocks( id ) {
 	return {
-		type: 'FETCH_SHARED_BLOCKS',
+		type: 'FETCH_SAVED_BLOCKS',
 		id,
 	};
 }
 
 /**
- * Returns an action object used in signalling that shared blocks have been
+ * Returns an action object used in signalling that saved blocks have been
  * received. `results` is an array of objects containing:
- *  - `sharedBlock` - Details about how the shared block is persisted.
+ *  - `savedBlock` - Details about how the saved block is persisted.
  *  - `parsedBlock` - The original block.
  *
- * @param {Object[]} results Shared blocks received.
+ * @param {Object[]} results Saved blocks received.
  *
  * @return {Object} Action object.
  */
-export function receiveSharedBlocks( results ) {
+export function receiveSavedBlocks( results ) {
 	return {
-		type: 'RECEIVE_SHARED_BLOCKS',
+		type: 'RECEIVE_SAVED_BLOCKS',
 		results,
 	};
 }
 
 /**
- * Returns an action object used to save a shared block that's in the store to
+ * Returns an action object used to save a saved block that's in the store to
  * the REST API.
  *
- * @param {Object} id The ID of the shared block to save.
+ * @param {Object} id The ID of the saved block to save.
  *
  * @return {Object} Action object.
  */
-export function saveSharedBlock( id ) {
+export function saveSavedBlock( id ) {
 	return {
-		type: 'SAVE_SHARED_BLOCK',
+		type: 'SAVE_SAVED_BLOCK',
 		id,
 	};
 }
 
 /**
- * Returns an action object used to delete a shared block via the REST API.
+ * Returns an action object used to delete a saved block via the REST API.
  *
- * @param {number} id The ID of the shared block to delete.
+ * @param {number} id The ID of the saved block to delete.
  *
  * @return {Object} Action object.
  */
-export function deleteSharedBlock( id ) {
+export function deleteSavedBlock( id ) {
 	return {
-		type: 'DELETE_SHARED_BLOCK',
+		type: 'DELETE_SAVED_BLOCK',
 		id,
 	};
 }
 
 /**
- * Returns an action object used in signalling that a shared block's title is
+ * Returns an action object used in signalling that a saved block's title is
  * to be updated.
  *
- * @param {number} id    The ID of the shared block to update.
+ * @param {number} id    The ID of the saved block to update.
  * @param {string} title The new title.
  *
  * @return {Object} Action object.
  */
-export function updateSharedBlockTitle( id, title ) {
+export function updateSavedBlockTitle( id, title ) {
 	return {
-		type: 'UPDATE_SHARED_BLOCK_TITLE',
+		type: 'UPDATE_SAVED_BLOCK_TITLE',
 		id,
 		title,
 	};
 }
 
 /**
- * Returns an action object used to convert a shared block into a static block.
+ * Returns an action object used to convert a saved block into a static block.
  *
  * @param {string} clientId The client ID of the block to attach.
  *
@@ -689,15 +689,15 @@ export function convertBlockToStatic( clientId ) {
 }
 
 /**
- * Returns an action object used to convert a static block into a shared block.
+ * Returns an action object used to convert a static block into a saved block.
  *
  * @param {string} clientId The client ID of the block to detach.
  *
  * @return {Object} Action object.
  */
-export function convertBlockToShared( clientId ) {
+export function convertBlockToSaved( clientId ) {
 	return {
-		type: 'CONVERT_BLOCK_TO_SHARED',
+		type: 'CONVERT_BLOCK_TO_SAVED',
 		clientId,
 	};
 }

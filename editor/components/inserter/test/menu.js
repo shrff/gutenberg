@@ -71,12 +71,12 @@ const textEmbedItem = {
 	utility: 0,
 };
 
-const sharedItem = {
+const savedItem = {
 	id: 'core/block/123',
 	name: 'core/block',
 	initialAttributes: { ref: 123 },
-	title: 'My shared block',
-	category: 'shared',
+	title: 'My saved block',
+	category: 'saved',
 	isDisabled: false,
 	utility: 0,
 };
@@ -88,14 +88,14 @@ const items = [
 	moreItem,
 	youtubeItem,
 	textEmbedItem,
-	sharedItem,
+	savedItem,
 ];
 
 const DEFAULT_PROPS = {
 	position: 'top center',
 	items: items,
 	debouncedSpeak: noop,
-	fetchSharedBlocks: noop,
+	fetchSavedBlocks: noop,
 	setTimeout: noop,
 };
 
@@ -220,11 +220,11 @@ describe( 'InserterMenu', () => {
 		assertNoResultsMessageNotToBePresent( element );
 	} );
 
-	it( 'should show shared items in the shared tab', () => {
+	it( 'should show saved items in the saved tab', () => {
 		const element = initializeAllClosedMenuStateAndReturnElement();
-		const sharedTab = getTabButtonWithContent( element, 'Shared' );
+		const savedTab = getTabButtonWithContent( element, 'Saved' );
 
-		TestUtils.Simulate.click( sharedTab );
+		TestUtils.Simulate.click( savedTab );
 
 		assertOpenedPanels( element, 1 );
 
@@ -233,7 +233,7 @@ describe( 'InserterMenu', () => {
 		);
 
 		expect( visibleBlocks ).toHaveLength( 1 );
-		expect( visibleBlocks[ 0 ].textContent ).toBe( 'My shared block' );
+		expect( visibleBlocks[ 0 ].textContent ).toBe( 'My saved block' );
 
 		assertNoResultsMessageNotToBePresent( element );
 	} );

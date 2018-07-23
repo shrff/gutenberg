@@ -13,7 +13,7 @@ import {
 	switchToBlockType,
 	createBlock,
 	serialize,
-	isSharedBlock,
+	isSavedBlock,
 	getDefaultBlockForPostFormat,
 	doBlocksMatchTemplate,
 	synchronizeBlocksWithTemplate,
@@ -31,14 +31,14 @@ import {
 	resetPost,
 	updatePost,
 	receiveBlocks,
-	receiveSharedBlocks,
+	receiveSavedBlocks,
 	replaceBlock,
 	replaceBlocks,
 	createSuccessNotice,
 	createErrorNotice,
 	createWarningNotice,
 	removeNotice,
-	saveSharedBlock,
+	saveSavedBlock,
 	insertBlock,
 	removeBlocks,
 	selectBlock,
@@ -57,7 +57,7 @@ import {
 	getBlockCount,
 	getBlockRootClientId,
 	getBlocks,
-	getSharedBlock,
+	getSavedBlock,
 	getPreviousBlockClientId,
 	getProvisionalBlockClientId,
 	getSelectedBlock,
@@ -75,7 +75,7 @@ import {
 const SAVE_POST_NOTICE_ID = 'SAVE_POST_NOTICE_ID';
 const AUTOSAVE_POST_NOTICE_ID = 'AUTOSAVE_POST_NOTICE_ID';
 const TRASH_POST_NOTICE_ID = 'TRASH_POST_NOTICE_ID';
-const SHARED_BLOCK_NOTICE_ID = 'SHARED_BLOCK_NOTICE_ID';
+const SAVED_BLOCK_NOTICE_ID = 'SAVED_BLOCK_NOTICE_ID';
 
 /**
  * Effect handler returning an action to remove the provisional block, if one
@@ -454,9 +454,9 @@ export default {
 
 		return setTemplateValidity( isValid );
 	},
-	FETCH_SHARED_BLOCKS( action, store ) {
+	FETCH_SAVED_BLOCKS( action, store ) {
 		// TODO: these are potentially undefined, this fix is in place
-		// until there is a filter to not use shared blocks if undefined
+		// until there is a filter to not use saved blocks if undefined
 		const basePath = wp.api.getPostTypeRoute( 'wp_block' );
 		if ( ! basePath ) {
 			return;
@@ -473,32 +473,32 @@ export default {
 		}
 
 		result
-			.then( ( sharedBlockOrBlocks ) => {
-				dispatch( receiveSharedBlocks( map(
-					castArray( sharedBlockOrBlocks ),
-					( sharedBlock ) => ( {
-						sharedBlock,
-						parsedBlock: parse( sharedBlock.content )[ 0 ],
+			.then( ( savedBlockOrBlocks ) => {
+				dispatch( receiveSavedBlocks( map(
+					castArray( savedBlockOrBlocks ),
+					( savedBlock ) => ( {
+						savedBlock,
+						parsedBlock: parse( savedBlock.content )[ 0 ],
 					} )
 				) ) );
 
 				dispatch( {
-					type: 'FETCH_SHARED_BLOCKS_SUCCESS',
+					type: 'FETCH_SAVED_BLOCKS_SUCCESS',
 					id,
 				} );
 			} )
 			.catch( ( error ) => dispatch( {
-				type: 'FETCH_SHARED_BLOCKS_FAILURE',
+				type: 'FETCH_SAVED_BLOCKS_FAILURE',
 				id,
 				error,
 			} ) );
 	},
-	RECEIVE_SHARED_BLOCKS( action ) {
+	RECEIVE_SAVED_BLOCKS( action ) {
 		return receiveBlocks( map( action.results, 'parsedBlock' ) );
 	},
-	SAVE_SHARED_BLOCK( action, store ) {
+	SAVE_SAVED_BLOCK( action, store ) {
 		// TODO: these are potentially undefined, this fix is in place
-		// until there is a filter to not use shared blocks if undefined
+		// until there is a filter to not use saved blocks if undefined
 		const basePath = wp.api.getPostTypeRoute( 'wp_block' );
 		if ( ! basePath ) {
 			return;
@@ -508,7 +508,7 @@ export default {
 		const { dispatch } = store;
 		const state = store.getState();
 
-		const { clientId, title, isTemporary } = getSharedBlock( state, id );
+		const { clientId, title, isTemporary } = getSavedBlock( state, id );
 		const { name, attributes, innerBlocks } = getBlock( state, clientId );
 		const content = serialize( createBlock( name, attributes, innerBlocks ) );
 
@@ -517,26 +517,26 @@ export default {
 		const method = isTemporary ? 'POST' : 'PUT';
 
 		apiFetch( { path, data, method } )
-			.then( ( updatedSharedBlock ) => {
+			.then( ( updatedSavedBlock ) => {
 				dispatch( {
-					type: 'SAVE_SHARED_BLOCK_SUCCESS',
-					updatedId: updatedSharedBlock.id,
+					type: 'SAVE_SAVED_BLOCK_SUCCESS',
+					updatedId: updatedSavedBlock.id,
 					id,
 				} );
 				const message = isTemporary ? __( 'Block created.' ) : __( 'Block updated.' );
-				dispatch( createSuccessNotice( message, { id: SHARED_BLOCK_NOTICE_ID } ) );
+				dispatch( createSuccessNotice( message, { id: SAVED_BLOCK_NOTICE_ID } ) );
 			} )
 			.catch( ( error ) => {
-				dispatch( { type: 'SAVE_SHARED_BLOCK_FAILURE', id } );
+				dispatch( { type: 'SAVE_SAVED_BLOCK_FAILURE', id } );
 				dispatch( createErrorNotice( error.message, {
-					id: SHARED_BLOCK_NOTICE_ID,
+					id: SAVED_BLOCK_NOTICE_ID,
 					spokenMessage: error.message,
 				} ) );
 			} );
 	},
-	DELETE_SHARED_BLOCK( action, store ) {
+	DELETE_SAVED_BLOCK( action, store ) {
 		// TODO: these are potentially undefined, this fix is in place
-		// until there is a filter to not use shared blocks if undefined
+		// until there is a filter to not use saved blocks if undefined
 		const basePath = wp.api.getPostTypeRoute( 'wp_block' );
 		if ( ! basePath ) {
 			return;
@@ -545,21 +545,21 @@ export default {
 		const { id } = action;
 		const { getState, dispatch } = store;
 
-		// Don't allow a shared block with a temporary ID to be deleted
-		const sharedBlock = getSharedBlock( getState(), id );
-		if ( ! sharedBlock || sharedBlock.isTemporary ) {
+		// Don't allow a saved block with a temporary ID to be deleted
+		const savedBlock = getSavedBlock( getState(), id );
+		if ( ! savedBlock || savedBlock.isTemporary ) {
 			return;
 		}
 
-		// Remove any other blocks that reference this shared block
+		// Remove any other blocks that reference this saved block
 		const allBlocks = getBlocks( getState() );
-		const associatedBlocks = allBlocks.filter( ( block ) => isSharedBlock( block ) && block.attributes.ref === id );
+		const associatedBlocks = allBlocks.filter( ( block ) => isSavedBlock( block ) && block.attributes.ref === id );
 		const associatedBlockClientIds = associatedBlocks.map( ( block ) => block.clientId );
 
 		const transactionId = uniqueId();
 
 		dispatch( {
-			type: 'REMOVE_SHARED_BLOCK',
+			type: 'REMOVE_SAVED_BLOCK',
 			id,
 			optimist: { type: BEGIN, id: transactionId },
 		} );
@@ -567,27 +567,27 @@ export default {
 		// Remove the parsed block.
 		dispatch( removeBlocks( [
 			...associatedBlockClientIds,
-			sharedBlock.clientId,
+			savedBlock.clientId,
 		] ) );
 
 		apiFetch( { path: `/wp/v2/${ basePath }/${ id }`, method: 'DELETE' } )
 			.then( () => {
 				dispatch( {
-					type: 'DELETE_SHARED_BLOCK_SUCCESS',
+					type: 'DELETE_SAVED_BLOCK_SUCCESS',
 					id,
 					optimist: { type: COMMIT, id: transactionId },
 				} );
 				const message = __( 'Block deleted.' );
-				dispatch( createSuccessNotice( message, { id: SHARED_BLOCK_NOTICE_ID } ) );
+				dispatch( createSuccessNotice( message, { id: SAVED_BLOCK_NOTICE_ID } ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
-					type: 'DELETE_SHARED_BLOCK_FAILURE',
+					type: 'DELETE_SAVED_BLOCK_FAILURE',
 					id,
 					optimist: { type: REVERT, id: transactionId },
 				} );
 				dispatch( createErrorNotice( error.message, {
-					id: SHARED_BLOCK_NOTICE_ID,
+					id: SAVED_BLOCK_NOTICE_ID,
 					spokenMessage: error.message,
 				} ) );
 			} );
@@ -595,32 +595,32 @@ export default {
 	CONVERT_BLOCK_TO_STATIC( action, store ) {
 		const state = store.getState();
 		const oldBlock = getBlock( state, action.clientId );
-		const sharedBlock = getSharedBlock( state, oldBlock.attributes.ref );
-		const referencedBlock = getBlock( state, sharedBlock.clientId );
+		const savedBlock = getSavedBlock( state, oldBlock.attributes.ref );
+		const referencedBlock = getBlock( state, savedBlock.clientId );
 		const newBlock = createBlock( referencedBlock.name, referencedBlock.attributes );
 		store.dispatch( replaceBlock( oldBlock.clientId, newBlock ) );
 	},
-	CONVERT_BLOCK_TO_SHARED( action, store ) {
+	CONVERT_BLOCK_TO_SAVED( action, store ) {
 		const { getState, dispatch } = store;
 
 		const parsedBlock = getBlock( getState(), action.clientId );
-		const sharedBlock = {
-			id: uniqueId( 'shared' ),
+		const savedBlock = {
+			id: uniqueId( 'saved' ),
 			clientId: parsedBlock.clientId,
-			title: __( 'Untitled shared block' ),
+			title: __( 'Untitled saved block' ),
 		};
 
-		dispatch( receiveSharedBlocks( [ {
-			sharedBlock,
+		dispatch( receiveSavedBlocks( [ {
+			savedBlock,
 			parsedBlock,
 		} ] ) );
 
-		dispatch( saveSharedBlock( sharedBlock.id ) );
+		dispatch( saveSavedBlock( savedBlock.id ) );
 
 		dispatch( replaceBlock(
 			parsedBlock.clientId,
 			createBlock( 'core/block', {
-				ref: sharedBlock.id,
+				ref: savedBlock.id,
 				layout: parsedBlock.attributes.layout,
 			} )
 		) );

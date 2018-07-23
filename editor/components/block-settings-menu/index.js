@@ -20,8 +20,8 @@ import './style.scss';
 import BlockModeToggle from './block-mode-toggle';
 import BlockDuplicateButton from './block-duplicate-button';
 import BlockRemoveButton from './block-remove-button';
-import SharedBlockConvertButton from './shared-block-convert-button';
-import SharedBlockDeleteButton from './shared-block-delete-button';
+import SavedBlockConvertButton from './saved-block-convert-button';
+import SavedBlockDeleteButton from './saved-block-delete-button';
 import BlockHTMLConvertButton from './block-html-convert-button';
 import BlockUnknownConvertButton from './block-unknown-convert-button';
 import _BlockSettingsMenuFirstItem from './block-settings-menu-first-item';
@@ -121,7 +121,7 @@ export class BlockSettingsMenu extends Component {
 								role="menuitem"
 							/>
 							{ count === 1 && (
-								<SharedBlockConvertButton
+								<SavedBlockConvertButton
 									clientId={ firstBlockClientId }
 									onToggle={ onClose }
 									itemsRole="menuitem"
@@ -129,7 +129,7 @@ export class BlockSettingsMenu extends Component {
 							) }
 							<div className="editor-block-settings-menu__separator" />
 							{ count === 1 && (
-								<SharedBlockDeleteButton
+								<SavedBlockDeleteButton
 									clientId={ firstBlockClientId }
 									onToggle={ onClose }
 									itemsRole="menuitem"

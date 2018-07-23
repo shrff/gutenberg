@@ -6,35 +6,35 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { SharedBlockConvertButton } from '../shared-block-convert-button';
+import { SavedBlockConvertButton } from '../saved-block-convert-button';
 
-describe( 'SharedBlockConvertButton', () => {
+describe( 'SavedBlockConvertButton', () => {
 	it( 'should not render when isVisible false', () => {
 		const wrapper = shallow(
-			<SharedBlockConvertButton isVisible={ false } />
+			<SavedBlockConvertButton isVisible={ false } />
 		);
 		expect( wrapper.children() ).not.toExist();
 	} );
 
-	it( 'should allow converting a static block to a shared block', () => {
+	it( 'should allow converting a static block to a saved block', () => {
 		const onConvert = jest.fn();
 		const wrapper = shallow(
-			<SharedBlockConvertButton
+			<SavedBlockConvertButton
 				isVisible
 				isStaticBlock
-				onConvertToShared={ onConvert }
+				onConvertToSaved={ onConvert }
 			/>
 		);
 		const button = wrapper.find( 'IconButton' ).first();
-		expect( button.children().text() ).toBe( 'Convert to Shared Block' );
+		expect( button.children().text() ).toBe( 'Convert to Saved Block' );
 		button.simulate( 'click' );
 		expect( onConvert ).toHaveBeenCalled();
 	} );
 
-	it( 'should allow converting a shared block to static', () => {
+	it( 'should allow converting a saved block to static', () => {
 		const onConvert = jest.fn();
 		const wrapper = shallow(
-			<SharedBlockConvertButton
+			<SavedBlockConvertButton
 				isVisible
 				isStaticBlock={ false }
 				onConvertToStatic={ onConvert }

@@ -24,15 +24,15 @@ import {
 	selectBlock,
 	removeBlock,
 	createErrorNotice,
-	fetchSharedBlocks,
-	receiveSharedBlocks,
+	fetchSavedBlocks,
+	receiveSavedBlocks,
 	receiveBlocks,
-	saveSharedBlock,
-	deleteSharedBlock,
+	saveSavedBlock,
+	deleteSavedBlock,
 	removeBlocks,
 	resetBlocks,
 	convertBlockToStatic,
-	convertBlockToShared,
+	convertBlockToSaved,
 	setTemplateValidity,
 	editPost,
 } from '../actions';
@@ -560,7 +560,7 @@ describe( 'effects', () => {
 		} );
 	} );
 
-	describe( 'shared block effects', () => {
+	describe( 'saved block effects', () => {
 		beforeAll( () => {
 			registerBlockType( 'core/test-block', {
 				title: 'Test block',
@@ -571,7 +571,7 @@ describe( 'effects', () => {
 				},
 			} );
 			registerBlockType( 'core/block', {
-				title: 'Shared Block',
+				title: 'Saved Block',
 				category: 'common',
 				save: () => null,
 				attributes: {
@@ -585,14 +585,14 @@ describe( 'effects', () => {
 			unregisterBlockType( 'core/block' );
 		} );
 
-		describe( '.FETCH_SHARED_BLOCKS', () => {
-			const handler = effects.FETCH_SHARED_BLOCKS;
+		describe( '.FETCH_SAVED_BLOCKS', () => {
+			const handler = effects.FETCH_SAVED_BLOCKS;
 
 			afterEach( () => {
 				jest.unmock( '@wordpress/api-fetch' );
 			} );
 
-			it( 'should fetch multiple shared blocks', () => {
+			it( 'should fetch multiple saved blocks', () => {
 				const promise = Promise.resolve( [
 					{
 						id: 123,
@@ -606,13 +606,13 @@ describe( 'effects', () => {
 				const dispatch = jest.fn();
 				const store = { getState: noop, dispatch };
 
-				handler( fetchSharedBlocks(), store );
+				handler( fetchSavedBlocks(), store );
 
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith(
-						receiveSharedBlocks( [
+						receiveSavedBlocks( [
 							{
-								sharedBlock: {
+								savedBlock: {
 									id: 123,
 									title: 'My cool block',
 									content: '<!-- wp:test-block {"name":"Big Bird"} /-->',
@@ -625,13 +625,13 @@ describe( 'effects', () => {
 						] )
 					);
 					expect( dispatch ).toHaveBeenCalledWith( {
-						type: 'FETCH_SHARED_BLOCKS_SUCCESS',
+						type: 'FETCH_SAVED_BLOCKS_SUCCESS',
 						id: undefined,
 					} );
 				} );
 			} );
 
-			it( 'should fetch a single shared block', () => {
+			it( 'should fetch a single saved block', () => {
 				const promise = Promise.resolve( {
 					id: 123,
 					title: 'My cool block',
@@ -643,13 +643,13 @@ describe( 'effects', () => {
 				const dispatch = jest.fn();
 				const store = { getState: noop, dispatch };
 
-				handler( fetchSharedBlocks( 123 ), store );
+				handler( fetchSavedBlocks( 123 ), store );
 
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith(
-						receiveSharedBlocks( [
+						receiveSavedBlocks( [
 							{
-								sharedBlock: {
+								savedBlock: {
 									id: 123,
 									title: 'My cool block',
 									content: '<!-- wp:test-block {"name":"Big Bird"} /-->',
@@ -662,7 +662,7 @@ describe( 'effects', () => {
 						] )
 					);
 					expect( dispatch ).toHaveBeenCalledWith( {
-						type: 'FETCH_SHARED_BLOCKS_SUCCESS',
+						type: 'FETCH_SAVED_BLOCKS_SUCCESS',
 						id: 123,
 					} );
 				} );
@@ -679,12 +679,12 @@ describe( 'effects', () => {
 				const dispatch = jest.fn();
 				const store = { getState: noop, dispatch };
 
-				handler( fetchSharedBlocks(), store );
+				handler( fetchSavedBlocks(), store );
 
 				return promise.catch( () => {
 					process.nextTick( () => {
 						expect( dispatch ).toHaveBeenCalledWith( {
-							type: 'FETCH_SHARED_BLOCKS_FAILURE',
+							type: 'FETCH_SAVED_BLOCKS_FAILURE',
 							error: {
 								code: 'unknown_error',
 								message: 'An unknown error occurred.',
@@ -695,11 +695,11 @@ describe( 'effects', () => {
 			} );
 		} );
 
-		describe( '.RECEIVE_SHARED_BLOCKS', () => {
-			const handler = effects.RECEIVE_SHARED_BLOCKS;
+		describe( '.RECEIVE_SAVED_BLOCKS', () => {
+			const handler = effects.RECEIVE_SAVED_BLOCKS;
 
 			it( 'should receive parsed blocks', () => {
-				const action = receiveSharedBlocks( [
+				const action = receiveSavedBlocks( [
 					{
 						parsedBlock: { clientId: 'broccoli' },
 					},
@@ -711,31 +711,31 @@ describe( 'effects', () => {
 			} );
 		} );
 
-		describe( '.SAVE_SHARED_BLOCK', () => {
-			const handler = effects.SAVE_SHARED_BLOCK;
+		describe( '.SAVE_SAVED_BLOCK', () => {
+			const handler = effects.SAVE_SAVED_BLOCK;
 
-			it( 'should save a shared block and swap its id', () => {
+			it( 'should save a saved block and swap its id', () => {
 				const promise = Promise.resolve( { id: 456 } );
 				apiFetch.mockReturnValue = promise;
 
 				set( global, [ 'wp', 'api', 'getPostTypeRoute' ], () => 'blocks' );
 
-				const sharedBlock = { id: 123, title: 'My cool block' };
+				const savedBlock = { id: 123, title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( saveSharedBlock( 123 ), store );
+				handler( saveSavedBlock( 123 ), store );
 
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
-						type: 'SAVE_SHARED_BLOCK_SUCCESS',
+						type: 'SAVE_SAVED_BLOCK_SUCCESS',
 						id: 123,
 						updatedId: 456,
 					} );
@@ -747,23 +747,23 @@ describe( 'effects', () => {
 				apiFetch.mockReturnValue = promise;
 				set( global, [ 'wp', 'api', 'getPostTypeRoute' ], () => 'blocks' );
 
-				const sharedBlock = { id: 123, title: 'My cool block' };
+				const savedBlock = { id: 123, title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( saveSharedBlock( 123 ), store );
+				handler( saveSavedBlock( 123 ), store );
 
 				promise.catch( () => {
 					process.nextTick( () => {
 						expect( dispatch ).toHaveBeenCalledWith( {
-							type: 'SAVE_SHARED_BLOCK_FAILURE',
+							type: 'SAVE_SAVED_BLOCK_FAILURE',
 							id: 123,
 						} );
 						done();
@@ -772,31 +772,31 @@ describe( 'effects', () => {
 			} );
 		} );
 
-		describe( '.DELETE_SHARED_BLOCK', () => {
-			const handler = effects.DELETE_SHARED_BLOCK;
+		describe( '.DELETE_SAVED_BLOCK', () => {
+			const handler = effects.DELETE_SAVED_BLOCK;
 
-			it( 'should delete a shared block', () => {
+			it( 'should delete a saved block', () => {
 				const promise = Promise.resolve( {} );
 				apiFetch.mockReturnValue = promise;
 				set( global, [ 'wp', 'api', 'getPostTypeRoute' ], () => 'blocks' );
 
 				const associatedBlock = createBlock( 'core/block', { ref: 123 } );
-				const sharedBlock = { id: 123, title: 'My cool block' };
+				const savedBlock = { id: 123, title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
 					resetBlocks( [ associatedBlock ] ),
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( deleteSharedBlock( 123 ), store );
+				handler( deleteSavedBlock( 123 ), store );
 
 				expect( dispatch ).toHaveBeenCalledWith( {
-					type: 'REMOVE_SHARED_BLOCK',
+					type: 'REMOVE_SAVED_BLOCK',
 					id: 123,
 					optimist: expect.any( Object ),
 				} );
@@ -807,7 +807,7 @@ describe( 'effects', () => {
 
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
-						type: 'DELETE_SHARED_BLOCK_SUCCESS',
+						type: 'DELETE_SAVED_BLOCK_SUCCESS',
 						id: 123,
 						optimist: expect.any( Object ),
 					} );
@@ -819,24 +819,24 @@ describe( 'effects', () => {
 				apiFetch.mockReturnValue = promise;
 				set( global, [ 'wp', 'api', 'getPostTypeRoute' ], () => 'blocks' );
 
-				const sharedBlock = { id: 123, title: 'My cool block' };
+				const savedBlock = { id: 123, title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( deleteSharedBlock( 123 ), store );
+				handler( deleteSavedBlock( 123 ), store );
 
 				promise
 					.catch( () => {
 						process.nextTick( () => {
 							expect( dispatch ).toHaveBeenCalledWith( {
-								type: 'DELETE_SHARED_BLOCK_FAILURE',
+								type: 'DELETE_SAVED_BLOCK_FAILURE',
 								id: 123,
 								optimist: expect.any( Object ),
 							} );
@@ -845,19 +845,19 @@ describe( 'effects', () => {
 					} );
 			} );
 
-			it( 'should not save shared blocks with temporary IDs', () => {
-				const sharedBlock = { id: 'shared1', title: 'My cool block' };
+			it( 'should not save saved blocks with temporary IDs', () => {
+				const savedBlock = { id: 'saved1', title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( deleteSharedBlock( 'shared1' ), store );
+				handler( deleteSavedBlock( 'saved1' ), store );
 
 				expect( dispatch ).not.toHaveBeenCalled();
 			} );
@@ -866,14 +866,14 @@ describe( 'effects', () => {
 		describe( '.CONVERT_BLOCK_TO_STATIC', () => {
 			const handler = effects.CONVERT_BLOCK_TO_STATIC;
 
-			it( 'should convert a shared block into a static block', () => {
+			it( 'should convert a saved block into a static block', () => {
 				const associatedBlock = createBlock( 'core/block', { ref: 123 } );
-				const sharedBlock = { id: 123, title: 'My cool block' };
+				const savedBlock = { id: 123, title: 'My cool block' };
 				const parsedBlock = createBlock( 'core/test-block', { name: 'Big Bird' } );
 
 				const state = reduce( [
 					resetBlocks( [ associatedBlock ] ),
-					receiveSharedBlocks( [ { sharedBlock, parsedBlock } ] ),
+					receiveSavedBlocks( [ { savedBlock, parsedBlock } ] ),
 					receiveBlocks( [ parsedBlock ] ),
 				], reducer, undefined );
 
@@ -896,31 +896,31 @@ describe( 'effects', () => {
 			} );
 		} );
 
-		describe( '.CONVERT_BLOCK_TO_SHARED', () => {
-			const handler = effects.CONVERT_BLOCK_TO_SHARED;
+		describe( '.CONVERT_BLOCK_TO_SAVED', () => {
+			const handler = effects.CONVERT_BLOCK_TO_SAVED;
 
-			it( 'should convert a static block into a shared block', () => {
+			it( 'should convert a static block into a saved block', () => {
 				const staticBlock = createBlock( 'core/block', { ref: 123 } );
 				const state = reducer( undefined, resetBlocks( [ staticBlock ] ) );
 
 				const dispatch = jest.fn();
 				const store = { getState: () => state, dispatch };
 
-				handler( convertBlockToShared( staticBlock.clientId ), store );
+				handler( convertBlockToSaved( staticBlock.clientId ), store );
 
 				expect( dispatch ).toHaveBeenCalledWith(
-					receiveSharedBlocks( [ {
-						sharedBlock: {
-							id: expect.stringMatching( /^shared/ ),
+					receiveSavedBlocks( [ {
+						savedBlock: {
+							id: expect.stringMatching( /^saved/ ),
 							clientId: staticBlock.clientId,
-							title: 'Untitled shared block',
+							title: 'Untitled saved block',
 						},
 						parsedBlock: staticBlock,
 					} ] )
 				);
 
 				expect( dispatch ).toHaveBeenCalledWith(
-					saveSharedBlock( expect.stringMatching( /^shared/ ) ),
+					saveSavedBlock( expect.stringMatching( /^saved/ ) ),
 				);
 
 				expect( dispatch ).toHaveBeenCalledWith( {
@@ -929,7 +929,7 @@ describe( 'effects', () => {
 					blocks: [
 						expect.objectContaining( {
 							name: 'core/block',
-							attributes: { ref: expect.stringMatching( /^shared/ ) },
+							attributes: { ref: expect.stringMatching( /^saved/ ) },
 						} ),
 					],
 					time: expect.any( Number ),

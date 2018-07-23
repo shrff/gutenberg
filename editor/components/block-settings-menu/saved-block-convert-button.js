@@ -9,15 +9,15 @@ import { noop } from 'lodash';
 import { Fragment } from '@wordpress/element';
 import { IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { isSharedBlock } from '@wordpress/blocks';
+import { isSavedBlock } from '@wordpress/blocks';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 
-export function SharedBlockConvertButton( {
+export function SavedBlockConvertButton( {
 	isVisible,
 	isStaticBlock,
 	onConvertToStatic,
-	onConvertToShared,
+	onConvertToSaved,
 	itemsRole,
 } ) {
 	if ( ! isVisible ) {
@@ -30,10 +30,10 @@ export function SharedBlockConvertButton( {
 				<IconButton
 					className="editor-block-settings-menu__control"
 					icon="controls-repeat"
-					onClick={ onConvertToShared }
+					onClick={ onConvertToSaved }
 					role={ itemsRole }
 				>
-					{ __( 'Convert to Shared Block' ) }
+					{ __( 'Convert to Saved Block' ) }
 				</IconButton>
 			) }
 			{ ! isStaticBlock && (
@@ -52,7 +52,7 @@ export function SharedBlockConvertButton( {
 
 export default compose( [
 	withSelect( ( select, { clientId } ) => {
-		const { getBlock, getSharedBlock } = select( 'core/editor' );
+		const { getBlock, getSavedBlock } = select( 'core/editor' );
 		const { getFallbackBlockName } = select( 'core/blocks' );
 
 		const block = getBlock( clientId );
@@ -61,15 +61,15 @@ export default compose( [
 		}
 
 		return {
-			// Hide 'Convert to Shared Block' on Classic blocks. Showing it causes a
+			// Hide 'Convert to Saved Block' on Classic blocks. Showing it causes a
 			// confusing UX, because of its similarity to the 'Convert to Blocks' button.
 			isVisible: block.name !== getFallbackBlockName(),
-			isStaticBlock: ! isSharedBlock( block ) || ! getSharedBlock( block.attributes.ref ),
+			isStaticBlock: ! isSavedBlock( block ) || ! getSavedBlock( block.attributes.ref ),
 		};
 	} ),
 	withDispatch( ( dispatch, { clientId, onToggle = noop } ) => {
 		const {
-			convertBlockToShared,
+			convertBlockToSaved,
 			convertBlockToStatic,
 		} = dispatch( 'core/editor' );
 
@@ -78,10 +78,10 @@ export default compose( [
 				convertBlockToStatic( clientId );
 				onToggle();
 			},
-			onConvertToShared() {
-				convertBlockToShared( clientId );
+			onConvertToSaved() {
+				convertBlockToSaved( clientId );
 				onToggle();
 			},
 		};
 	} ),
-] )( SharedBlockConvertButton );
+] )( SavedBlockConvertButton );

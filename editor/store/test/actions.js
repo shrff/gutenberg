@@ -5,11 +5,11 @@ import {
 	replaceBlocks,
 	startTyping,
 	stopTyping,
-	fetchSharedBlocks,
-	saveSharedBlock,
-	deleteSharedBlock,
+	fetchSavedBlocks,
+	saveSavedBlock,
+	deleteSavedBlock,
 	convertBlockToStatic,
-	convertBlockToShared,
+	convertBlockToSaved,
 	toggleSelection,
 	setupEditor,
 	resetPost,
@@ -460,34 +460,34 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'fetchSharedBlocks', () => {
-		it( 'should return the FETCH_SHARED_BLOCKS action', () => {
-			expect( fetchSharedBlocks() ).toEqual( {
-				type: 'FETCH_SHARED_BLOCKS',
+	describe( 'fetchSavedBlocks', () => {
+		it( 'should return the FETCH_SAVED_BLOCKS action', () => {
+			expect( fetchSavedBlocks() ).toEqual( {
+				type: 'FETCH_SAVED_BLOCKS',
 			} );
 		} );
 
 		it( 'should take an optional id argument', () => {
-			expect( fetchSharedBlocks( 123 ) ).toEqual( {
-				type: 'FETCH_SHARED_BLOCKS',
+			expect( fetchSavedBlocks( 123 ) ).toEqual( {
+				type: 'FETCH_SAVED_BLOCKS',
 				id: 123,
 			} );
 		} );
 	} );
 
-	describe( 'saveSharedBlock', () => {
-		it( 'should return the SAVE_SHARED_BLOCK action', () => {
-			expect( saveSharedBlock( 123 ) ).toEqual( {
-				type: 'SAVE_SHARED_BLOCK',
+	describe( 'saveSavedBlock', () => {
+		it( 'should return the SAVE_SAVED_BLOCK action', () => {
+			expect( saveSavedBlock( 123 ) ).toEqual( {
+				type: 'SAVE_SAVED_BLOCK',
 				id: 123,
 			} );
 		} );
 	} );
 
-	describe( 'deleteSharedBlock', () => {
-		it( 'should return the DELETE_SHARED_BLOCK action', () => {
-			expect( deleteSharedBlock( 123 ) ).toEqual( {
-				type: 'DELETE_SHARED_BLOCK',
+	describe( 'deleteSavedBlock', () => {
+		it( 'should return the DELETE_SAVED_BLOCK action', () => {
+			expect( deleteSavedBlock( 123 ) ).toEqual( {
+				type: 'DELETE_SAVED_BLOCK',
 				id: 123,
 			} );
 		} );
@@ -503,11 +503,11 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'convertBlockToShared', () => {
-		it( 'should return the CONVERT_BLOCK_TO_SHARED action', () => {
+	describe( 'convertBlockToSaved', () => {
+		it( 'should return the CONVERT_BLOCK_TO_SAVED action', () => {
 			const clientId = '358b59ee-bab3-4d6f-8445-e8c6971a5605';
-			expect( convertBlockToShared( clientId ) ).toEqual( {
-				type: 'CONVERT_BLOCK_TO_SHARED',
+			expect( convertBlockToSaved( clientId ) ).toEqual( {
+				type: 'CONVERT_BLOCK_TO_SAVED',
 				clientId,
 			} );
 		} );

@@ -7,14 +7,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SharedBlockDeleteButton } from '../shared-block-delete-button';
+import { SavedBlockDeleteButton } from '../saved-block-delete-button';
 
-describe( 'SharedBlockDeleteButton', () => {
+describe( 'SavedBlockDeleteButton', () => {
 	it( 'matches the snapshot', () => {
 		const wrapper = shallow(
-			<SharedBlockDeleteButton
+			<SavedBlockDeleteButton
 				role="menuitem"
-				sharedBlock={ { id: 123 } }
+				savedBlock={ { id: 123 } }
 				onDelete={ noop }
 			/>
 		);
@@ -22,11 +22,11 @@ describe( 'SharedBlockDeleteButton', () => {
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
-	it( 'should allow deleting a shared block', () => {
+	it( 'should allow deleting a saved block', () => {
 		const onDelete = jest.fn();
 		const wrapper = shallow(
-			<SharedBlockDeleteButton
-				sharedBlock={ { id: 123 } }
+			<SavedBlockDeleteButton
+				savedBlock={ { id: 123 } }
 				onDelete={ onDelete }
 			/>
 		);

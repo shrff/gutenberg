@@ -16,11 +16,11 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import SharedBlockEditPanel from './edit-panel';
-import SharedBlockIndicator from './indicator';
+import SavedBlockEditPanel from './edit-panel';
+import SavedBlockIndicator from './indicator';
 
-class SharedBlockEdit extends Component {
-	constructor( { sharedBlock } ) {
+class SavedBlockEdit extends Component {
+	constructor( { savedBlock } ) {
 		super( ...arguments );
 
 		this.startEditing = this.startEditing.bind( this );
@@ -29,15 +29,15 @@ class SharedBlockEdit extends Component {
 		this.setTitle = this.setTitle.bind( this );
 		this.save = this.save.bind( this );
 
-		if ( sharedBlock && sharedBlock.isTemporary ) {
-			// Start in edit mode when we're working with a newly created shared block
+		if ( savedBlock && savedBlock.isTemporary ) {
+			// Start in edit mode when we're working with a newly created saved block
 			this.state = {
 				isEditing: true,
-				title: sharedBlock.title,
+				title: savedBlock.title,
 				changedAttributes: {},
 			};
 		} else {
-			// Start in preview mode when we're working with an existing shared block
+			// Start in preview mode when we're working with an existing saved block
 			this.state = {
 				isEditing: false,
 				title: null,
@@ -47,17 +47,17 @@ class SharedBlockEdit extends Component {
 	}
 
 	componentDidMount() {
-		if ( ! this.props.sharedBlock ) {
-			this.props.fetchSharedBlock();
+		if ( ! this.props.savedBlock ) {
+			this.props.fetchSavedBlock();
 		}
 	}
 
 	startEditing() {
-		const { sharedBlock } = this.props;
+		const { savedBlock } = this.props;
 
 		this.setState( {
 			isEditing: true,
-			title: sharedBlock.title,
+			title: savedBlock.title,
 			changedAttributes: {},
 		} );
 	}
@@ -83,10 +83,10 @@ class SharedBlockEdit extends Component {
 	}
 
 	save() {
-		const { sharedBlock, onUpdateTitle, updateAttributes, block, onSave } = this.props;
+		const { savedBlock, onUpdateTitle, updateAttributes, block, onSave } = this.props;
 		const { title, changedAttributes } = this.state;
 
-		if ( title !== sharedBlock.title ) {
+		if ( title !== savedBlock.title ) {
 			onUpdateTitle( title );
 		}
 
@@ -97,14 +97,14 @@ class SharedBlockEdit extends Component {
 	}
 
 	render() {
-		const { isSelected, sharedBlock, block, isFetching, isSaving } = this.props;
+		const { isSelected, savedBlock, block, isFetching, isSaving } = this.props;
 		const { isEditing, title, changedAttributes } = this.state;
 
-		if ( ! sharedBlock && isFetching ) {
+		if ( ! savedBlock && isFetching ) {
 			return <Placeholder><Spinner /></Placeholder>;
 		}
 
-		if ( ! sharedBlock || ! block ) {
+		if ( ! savedBlock || ! block ) {
 			return <Placeholder>{ __( 'Block has been deleted or is unavailable.' ) }</Placeholder>;
 		}
 
@@ -127,17 +127,17 @@ class SharedBlockEdit extends Component {
 			<Fragment>
 				{ element }
 				{ ( isSelected || isEditing ) && (
-					<SharedBlockEditPanel
+					<SavedBlockEditPanel
 						isEditing={ isEditing }
-						title={ title !== null ? title : sharedBlock.title }
-						isSaving={ isSaving && ! sharedBlock.isTemporary }
+						title={ title !== null ? title : savedBlock.title }
+						isSaving={ isSaving && ! savedBlock.isTemporary }
 						onEdit={ this.startEditing }
 						onChangeTitle={ this.setTitle }
 						onSave={ this.save }
 						onCancel={ this.stopEditing }
 					/>
 				) }
-				{ ! isSelected && ! isEditing && <SharedBlockIndicator title={ sharedBlock.title } /> }
+				{ ! isSelected && ! isEditing && <SavedBlockIndicator title={ savedBlock.title } /> }
 			</Fragment>
 		);
 	}
@@ -146,35 +146,35 @@ class SharedBlockEdit extends Component {
 export default compose( [
 	withSelect( ( select, ownProps ) => {
 		const {
-			getSharedBlock,
-			isFetchingSharedBlock,
-			isSavingSharedBlock,
+			getSavedBlock,
+			isFetchingSavedBlock,
+			isSavingSavedBlock,
 			getBlock,
 		} = select( 'core/editor' );
 		const { ref } = ownProps.attributes;
-		const sharedBlock = getSharedBlock( ref );
+		const savedBlock = getSavedBlock( ref );
 
 		return {
-			sharedBlock,
-			isFetching: isFetchingSharedBlock( ref ),
-			isSaving: isSavingSharedBlock( ref ),
-			block: sharedBlock ? getBlock( sharedBlock.clientId ) : null,
+			savedBlock,
+			isFetching: isFetchingSavedBlock( ref ),
+			isSaving: isSavingSavedBlock( ref ),
+			block: savedBlock ? getBlock( savedBlock.clientId ) : null,
 		};
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const {
-			fetchSharedBlocks,
+			fetchSavedBlocks,
 			updateBlockAttributes,
-			updateSharedBlockTitle,
-			saveSharedBlock,
+			updateSavedBlockTitle,
+			saveSavedBlock,
 		} = dispatch( 'core/editor' );
 		const { ref } = ownProps.attributes;
 
 		return {
-			fetchSharedBlock: partial( fetchSharedBlocks, ref ),
+			fetchSavedBlock: partial( fetchSavedBlocks, ref ),
 			updateAttributes: updateBlockAttributes,
-			onUpdateTitle: partial( updateSharedBlockTitle, ref ),
-			onSave: partial( saveSharedBlock, ref ),
+			onUpdateTitle: partial( updateSavedBlockTitle, ref ),
+			onSave: partial( saveSavedBlock, ref ),
 		};
 	} ),
-] )( SharedBlockEdit );
+] )( SavedBlockEdit );

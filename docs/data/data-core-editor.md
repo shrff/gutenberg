@@ -878,36 +878,36 @@ Returns the user notices array.
 
 List of notices.
 
-### isSavingSharedBlock
+### isSavingSavedBlock
 
-Returns whether or not the shared block with the given ID is being saved.
+Returns whether or not the saved block with the given ID is being saved.
 
 *Parameters*
 
  * state: Global application state.
- * ref: The shared block's ID.
+ * ref: The saved block's ID.
 
 *Returns*
 
-Whether or not the shared block is being saved.
+Whether or not the saved block is being saved.
 
-### isFetchingSharedBlock
+### isFetchingSavedBlock
 
-Returns true if the shared block with the given ID is being fetched, or
+Returns true if the saved block with the given ID is being fetched, or
 false otherwise.
 
 *Parameters*
 
  * state: Global application state.
- * ref: The shared block's ID.
+ * ref: The saved block's ID.
 
 *Returns*
 
-Whether the shared block is being fetched.
+Whether the saved block is being fetched.
 
-### getSharedBlocks
+### getSavedBlocks
 
-Returns an array of all shared blocks.
+Returns an array of all saved blocks.
 
 *Parameters*
 
@@ -915,7 +915,7 @@ Returns an array of all shared blocks.
 
 *Returns*
 
-An array of all shared blocks.
+An array of all saved blocks.
 
 ### getStateBeforeOptimisticTransaction
 
@@ -1343,65 +1343,65 @@ Returns an action object used to remove a notice.
 
  * id: The notice id.
 
-### fetchSharedBlocks
+### fetchSavedBlocks
 
-Returns an action object used to fetch a single shared block or all shared
+Returns an action object used to fetch a single saved block or all saved
 blocks from the REST API into the store.
 
 *Parameters*
 
- * id: If given, only a single shared block with this ID will
+ * id: If given, only a single saved block with this ID will
                     be fetched.
 
-### receiveSharedBlocks
+### receiveSavedBlocks
 
-Returns an action object used in signalling that shared blocks have been
+Returns an action object used in signalling that saved blocks have been
 received. `results` is an array of objects containing:
- - `sharedBlock` - Details about how the shared block is persisted.
+ - `savedBlock` - Details about how the saved block is persisted.
  - `parsedBlock` - The original block.
 
 *Parameters*
 
- * results: Shared blocks received.
+ * results: Saved blocks received.
 
-### saveSharedBlock
+### saveSavedBlock
 
-Returns an action object used to save a shared block that's in the store to
+Returns an action object used to save a saved block that's in the store to
 the REST API.
 
 *Parameters*
 
- * id: The ID of the shared block to save.
+ * id: The ID of the saved block to save.
 
-### deleteSharedBlock
+### deleteSavedBlock
 
-Returns an action object used to delete a shared block via the REST API.
+Returns an action object used to delete a saved block via the REST API.
 
 *Parameters*
 
- * id: The ID of the shared block to delete.
+ * id: The ID of the saved block to delete.
 
-### updateSharedBlockTitle
+### updateSavedBlockTitle
 
-Returns an action object used in signalling that a shared block's title is
+Returns an action object used in signalling that a saved block's title is
 to be updated.
 
 *Parameters*
 
- * id: The ID of the shared block to update.
+ * id: The ID of the saved block to update.
  * title: The new title.
 
 ### convertBlockToStatic
 
-Returns an action object used to convert a shared block into a static block.
+Returns an action object used to convert a saved block into a static block.
 
 *Parameters*
 
  * clientId: The client ID of the block to attach.
 
-### convertBlockToShared
+### convertBlockToSaved
 
-Returns an action object used to convert a static block into a shared block.
+Returns an action object used to convert a static block into a saved block.
 
 *Parameters*
 

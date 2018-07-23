@@ -76,11 +76,11 @@ const {
 	didPostSaveRequestFail,
 	getSuggestedPostFormat,
 	getNotices,
-	getSharedBlock,
-	isSavingSharedBlock,
-	isFetchingSharedBlock,
+	getSavedBlock,
+	isSavingSavedBlock,
+	isFetchingSavedBlock,
 	isSelectionEnabled,
-	getSharedBlocks,
+	getSavedBlocks,
 	getStateBeforeOptimisticTransaction,
 	isPublishingPost,
 	canInsertBlockType,
@@ -105,8 +105,8 @@ describe( 'selectors', () => {
 	beforeAll( () => {
 		registerBlockType( 'core/block', {
 			save: () => null,
-			category: 'shared',
-			title: 'Shared Block Stub',
+			category: 'saved',
+			title: 'Saved Block Stub',
 			supports: {
 				inserter: false,
 			},
@@ -3059,7 +3059,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getInserterItems', () => {
-		it( 'should properly list block type and shared block items', () => {
+		it( 'should properly list block type and saved block items', () => {
 			const state = {
 				editor: {
 					present: {
@@ -3070,9 +3070,9 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
-						1: { clientId: 'block1', title: 'Shared Block 1' },
+						1: { clientId: 'block1', title: 'Saved Block 1' },
 					},
 				},
 				currentPost: {},
@@ -3099,16 +3099,16 @@ describe( 'selectors', () => {
 				frecency: 0,
 				hasChildBlocks: false,
 			} );
-			const sharedBlockItem = items.find( ( item ) => item.id === 'core/block/1' );
-			expect( sharedBlockItem ).toEqual( {
+			const savedBlockItem = items.find( ( item ) => item.id === 'core/block/1' );
+			expect( savedBlockItem ).toEqual( {
 				id: 'core/block/1',
 				name: 'core/block',
 				initialAttributes: { ref: 1 },
-				title: 'Shared Block 1',
+				title: 'Saved Block 1',
 				icon: {
 					src: 'test',
 				},
-				category: 'shared',
+				category: 'saved',
 				keywords: [],
 				isDisabled: false,
 				utility: 0,
@@ -3128,10 +3128,10 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
-						1: { clientId: 'block1', title: 'Shared Block 1' },
-						2: { clientId: 'block1', title: 'Shared Block 2' },
+						1: { clientId: 'block1', title: 'Saved Block 1' },
+						2: { clientId: 'block1', title: 'Saved Block 2' },
 					},
 				},
 				currentPost: {},
@@ -3165,10 +3165,10 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
-						1: { clientId: 'block1', title: 'Shared Block 1' },
-						2: { clientId: 'block1', title: 'Shared Block 2' },
+						1: { clientId: 'block1', title: 'Saved Block 1' },
+						2: { clientId: 'block1', title: 'Saved Block 2' },
 					},
 				},
 				currentPost: {},
@@ -3224,7 +3224,7 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 				currentPost: {},
@@ -3248,7 +3248,7 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 				currentPost: {},
@@ -3272,7 +3272,7 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 				currentPost: {},
@@ -3285,9 +3285,9 @@ describe( 'selectors', () => {
 				settings: {},
 			};
 			const items = getInserterItems( state );
-			const sharedBlock2Item = items.find( ( item ) => item.id === 'core/test-block-b' );
-			expect( sharedBlock2Item.utility ).toBe( INSERTER_UTILITY_MEDIUM );
-			expect( sharedBlock2Item.frecency ).toBe( 2.5 );
+			const savedBlock2Item = items.find( ( item ) => item.id === 'core/test-block-b' );
+			expect( savedBlock2Item.utility ).toBe( INSERTER_UTILITY_MEDIUM );
+			expect( savedBlock2Item.frecency ).toBe( 2.5 );
 		} );
 
 		it( 'should give contextual blocks a high utility', () => {
@@ -3303,7 +3303,7 @@ describe( 'selectors', () => {
 						edits: {},
 					},
 				},
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 				currentPost: {},
@@ -3319,10 +3319,10 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getSharedBlock', () => {
-		it( 'should return a shared block', () => {
+	describe( 'getSavedBlock', () => {
+		it( 'should return a saved block', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
 						8109: {
 							clientId: 'foo',
@@ -3332,8 +3332,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const actualSharedBlock = getSharedBlock( state, 8109 );
-			expect( actualSharedBlock ).toEqual( {
+			const actualSavedBlock = getSavedBlock( state, 8109 );
+			expect( actualSavedBlock ).toEqual( {
 				id: 8109,
 				isTemporary: false,
 				clientId: 'foo',
@@ -3341,11 +3341,11 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		it( 'should return a temporary shared block', () => {
+		it( 'should return a temporary saved block', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
-						shared1: {
+						saved1: {
 							clientId: 'foo',
 							title: 'My cool block',
 						},
@@ -3353,106 +3353,106 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const actualSharedBlock = getSharedBlock( state, 'shared1' );
-			expect( actualSharedBlock ).toEqual( {
-				id: 'shared1',
+			const actualSavedBlock = getSavedBlock( state, 'saved1' );
+			expect( actualSavedBlock ).toEqual( {
+				id: 'saved1',
 				isTemporary: true,
 				clientId: 'foo',
 				title: 'My cool block',
 			} );
 		} );
 
-		it( 'should return null when no shared block exists', () => {
+		it( 'should return null when no saved block exists', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 			};
 
-			const sharedBlock = getSharedBlock( state, 123 );
-			expect( sharedBlock ).toBeNull();
+			const savedBlock = getSavedBlock( state, 123 );
+			expect( savedBlock ).toBeNull();
 		} );
 	} );
 
-	describe( 'isSavingSharedBlock', () => {
+	describe( 'isSavingSavedBlock', () => {
 		it( 'should return false when the block is not being saved', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					isSaving: {},
 				},
 			};
 
-			const isSaving = isSavingSharedBlock( state, 5187 );
+			const isSaving = isSavingSavedBlock( state, 5187 );
 			expect( isSaving ).toBe( false );
 		} );
 
 		it( 'should return true when the block is being saved', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					isSaving: {
 						5187: true,
 					},
 				},
 			};
 
-			const isSaving = isSavingSharedBlock( state, 5187 );
+			const isSaving = isSavingSavedBlock( state, 5187 );
 			expect( isSaving ).toBe( true );
 		} );
 	} );
 
-	describe( 'isFetchingSharedBlock', () => {
+	describe( 'isFetchingSavedBlock', () => {
 		it( 'should return false when the block is not being fetched', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					isFetching: {},
 				},
 			};
 
-			const isFetching = isFetchingSharedBlock( state, 5187 );
+			const isFetching = isFetchingSavedBlock( state, 5187 );
 			expect( isFetching ).toBe( false );
 		} );
 
 		it( 'should return true when the block is being fetched', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					isFetching: {
 						5187: true,
 					},
 				},
 			};
 
-			const isFetching = isFetchingSharedBlock( state, 5187 );
+			const isFetching = isFetchingSavedBlock( state, 5187 );
 			expect( isFetching ).toBe( true );
 		} );
 	} );
 
-	describe( 'getSharedBlocks', () => {
-		it( 'should return an array of shared blocks', () => {
+	describe( 'getSavedBlocks', () => {
+		it( 'should return an array of saved blocks', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					data: {
 						123: { clientId: 'carrot' },
-						shared1: { clientId: 'broccoli' },
+						saved1: { clientId: 'broccoli' },
 					},
 				},
 			};
 
-			const sharedBlocks = getSharedBlocks( state );
-			expect( sharedBlocks ).toEqual( [
+			const savedBlocks = getSavedBlocks( state );
+			expect( savedBlocks ).toEqual( [
 				{ id: 123, isTemporary: false, clientId: 'carrot' },
-				{ id: 'shared1', isTemporary: true, clientId: 'broccoli' },
+				{ id: 'saved1', isTemporary: true, clientId: 'broccoli' },
 			] );
 		} );
 
-		it( 'should return an empty array when no shared blocks exist', () => {
+		it( 'should return an empty array when no saved blocks exist', () => {
 			const state = {
-				sharedBlocks: {
+				savedBlocks: {
 					data: {},
 				},
 			};
 
-			const sharedBlocks = getSharedBlocks( state );
-			expect( sharedBlocks ).toEqual( [] );
+			const savedBlocks = getSavedBlocks( state );
+			expect( savedBlocks ).toEqual( [] );
 		} );
 	} );
 
