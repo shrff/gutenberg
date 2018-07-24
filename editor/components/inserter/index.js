@@ -61,6 +61,7 @@ class Inserter extends Component {
 						className="editor-inserter__toggle"
 						aria-haspopup="true"
 						aria-expanded={ isOpen }
+						tooltip
 					>
 						{ children }
 					</IconButton>
