@@ -355,7 +355,7 @@ export class RichText extends Component {
 		const transformed = this.patterns.reduce( ( accu, transform ) => transform( accu ), record );
 
 		if ( record !== transformed ) {
-			richTextStructure.apply( transformed, this.editor.getBody() );
+			richTextStructure.apply( transformed, this.editor.getBody(), multiline );
 			this.savedContent = transformed.value;
 		} else {
 			this.savedContent = record.value;
@@ -365,14 +365,15 @@ export class RichText extends Component {
 	}
 
 	onChange( record ) {
+		const { multiline } = this.props;
+
 		if ( ! record ) {
-			const { multiline } = this.props;
 			const rootNode = this.editor.getBody();
 			const range = this.editor.selection.getRng();
 
 			record = richTextStructure.createWithSelection( rootNode, range, multiline );
 		} else {
-			richTextStructure.apply( record, this.editor.getBody() );
+			richTextStructure.apply( record, this.editor.getBody(), multiline );
 		}
 
 		this.savedContent = record.value;

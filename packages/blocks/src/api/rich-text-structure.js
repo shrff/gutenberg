@@ -293,24 +293,41 @@ function getNodeByPath( node, path ) {
 
 export function toDOM( { value, selection = {} }, multiline, _tag ) {
 	const doc = document.implementation.createHTMLDocument( '' );
-	const range = doc.createRange && doc.createRange();
 	let { body } = doc;
+	let startPath = [];
+	let endPath = [];
 
 	if ( multiline ) {
-		value.forEach( ( piece ) => {
-			body.appendChild( toDOM( { value: piece }, false, multiline ).body );
+		value.forEach( ( piece, index ) => {
+			const start = selection.start && selection.start[ 0 ] === index ? selection.start[ 1 ] : undefined;
+			const end = selection.end && selection.end[ 0 ] === index ? selection.end[ 1 ] : undefined;
+			const dom = toDOM( {
+				value: piece,
+				selection: {
+					start,
+					end,
+				},
+			}, false, multiline );
+
+			body.appendChild( dom.body );
+
+			if ( dom.selection.startPath.length ) {
+				startPath = [ index, ...dom.selection.startPath ];
+			}
+
+			if ( dom.selection.endPath.length ) {
+				endPath = [ index, ...dom.selection.endPath ];
+			}
 		} );
 
 		return {
 			body,
-			range,
+			selection: { startPath, endPath },
 		};
 	}
 
 	const { formats, text } = value;
 	const { start, end } = selection;
-	let startPath = [];
-	let endPath = [];
 
 	if ( _tag ) {
 		body = body.appendChild( doc.createElement( _tag ) );
@@ -402,7 +419,7 @@ export function isEmpty( record ) {
 }
 
 export function splice( { formats, text, selection, value }, start, deleteCount, textToInsert = '', formatsToInsert = [] ) {
-	if ( selection ) {
+	if ( value !== undefined ) {
 		const diff = textToInsert.length - deleteCount;
 
 		return {
@@ -433,6 +450,34 @@ export function applyFormat( { formats, text, value, selection }, format, start,
 		start = start || selection.start;
 		end = end || selection.end;
 
+		if ( Array.isArray( value ) ) {
+			return {
+				selection,
+				value: value.map( ( item, index ) => {
+					const [ startRecord, startOffset ] = start;
+					const [ endRecord, endOffset ] = end;
+
+					if ( startRecord === endRecord && startRecord === index ) {
+						return applyFormat( item, format, startOffset, endOffset );
+					}
+
+					if ( startRecord === index ) {
+						return applyFormat( item, format, startOffset, item.text.length );
+					}
+
+					if ( endRecord === index ) {
+						return applyFormat( item, format, 0, endOffset );
+					}
+
+					if ( index > startRecord && index < endRecord ) {
+						return applyFormat( item, format, 0, item.text.length );
+					}
+
+					return item;
+				} ),
+			};
+		}
+
 		return {
 			selection,
 			value: applyFormat( value, format, start, end ),
@@ -457,6 +502,34 @@ export function removeFormat( { formats, text, value, selection }, formatType, s
 		start = start || selection.start;
 		end = end || selection.end;
 
+		if ( Array.isArray( value ) ) {
+			return {
+				selection,
+				value: value.map( ( item, index ) => {
+					const [ startRecord, startOffset ] = start;
+					const [ endRecord, endOffset ] = end;
+
+					if ( startRecord === endRecord && startRecord === index ) {
+						return removeFormat( item, formatType, startOffset, endOffset );
+					}
+
+					if ( startRecord === index ) {
+						return removeFormat( item, formatType, startOffset, item.text.length );
+					}
+
+					if ( endRecord === index ) {
+						return removeFormat( item, formatType, 0, endOffset );
+					}
+
+					if ( index > startRecord && index < endRecord ) {
+						return removeFormat( item, formatType, 0, item.text.length );
+					}
+
+					return item;
+				} ),
+			};
+		}
+
 		return {
 			selection,
 			value: removeFormat( value, formatType, start, end ),
@@ -474,15 +547,18 @@ export function removeFormat( { formats, text, value, selection }, formatType, s
 }
 
 export function getActiveFormat( { value, selection }, formatType ) {
-	if ( ! selection ) {
+	if ( ! selection || ! selection.start ) {
 		return false;
 	}
 
 	if ( Array.isArray( value ) ) {
 		return getActiveFormat( {
 			value: value[ selection.start[ 0 ] ],
-			selection: selection.start[ 1 ],
-		} );
+			selection: {
+				start: selection.start[ 1 ],
+				end: selection.end[ 1 ],
+			},
+		}, formatType );
 	}
 
 	const formats = value.formats[ selection.start ];

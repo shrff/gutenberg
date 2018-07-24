@@ -14,11 +14,13 @@ import {
 	applyFormat,
 	removeFormat,
 	split,
+	getActiveFormat,
 } from '../rich-text-structure';
 
 function createNode( HTML ) {
-	document.body.innerHTML = HTML;
-	return document.body.firstChild;
+	const doc = document.implementation.createHTMLDocument( '' );
+	doc.body.innerHTML = HTML;
+	return doc.body.firstChild;
 }
 
 describe( 'create', () => {
@@ -437,6 +439,61 @@ describe( 'splice', () => {
 
 		expect( splice( record, 2, 4, 'a', [ [ { type: 'strong' } ] ] ) ).toEqual( expected );
 	} );
+
+	// it( 'should delete and insert multiline', () => {
+	// 	const record = {
+	// 		value: [
+	// 			{
+	// 				formats: [
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					[ { type: 'em' } ],
+	// 					[ { type: 'em' } ],
+	// 					[ { type: 'em' } ],
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 				],
+	// 				text: 'one two three',
+	// 			}
+	// 		],
+	// 		selection: {
+	// 			start: [ 0, 6 ],
+	// 			end: [ 0, 6 ],
+	// 		},
+	// 	};
+
+	// 	const expected = {
+	// 		value: [
+	// 			{
+	// 				formats: [
+	// 					undefined,
+	// 					undefined,
+	// 					[ { type: 'strong' } ],
+	// 					[ { type: 'em' } ],
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 					undefined,
+	// 				],
+	// 				text: 'onao three',
+	// 			}
+	// 		],
+	// 		selection: {
+	// 			start: [ 0, 3 ],
+	// 			end: [ 0, 3 ],
+	// 		},
+	// 	};
+
+	// 	expect( splice( record, [ 0, 2 ], [ 0, 4 ], 'a', [ [ { type: 'strong' } ] ] ) ).toEqual( expected );
+	// } );
 } );
 
 describe( 'applyFormat', () => {
@@ -535,6 +592,98 @@ describe( 'applyFormat', () => {
 
 		expect( applyFormat( record, { type: 'strong' } ) ).toEqual( expected );
 	} );
+
+	it( 'should apply format for multiline', () => {
+		const record = {
+			value: [
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'one',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'two',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'three',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'four',
+				},
+			],
+			selection: {
+				start: [ 0, 2 ],
+				end: [ 2, 1 ],
+			},
+		};
+
+		const expected = {
+			value: [
+				{
+					formats: [
+						undefined,
+						undefined,
+						[ { type: 'em' } ],
+					],
+					text: 'one',
+				},
+				{
+					formats: [
+						[ { type: 'em' } ],
+						[ { type: 'em' } ],
+						[ { type: 'em' } ],
+					],
+					text: 'two',
+				},
+				{
+					formats: [
+						[ { type: 'em' } ],
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'three',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'four',
+				},
+			],
+			selection: {
+				start: [ 0, 2 ],
+				end: [ 2, 1 ],
+			},
+		};
+
+		expect( applyFormat( record, { type: 'em' } ) ).toEqual( expected );
+	} );
 } );
 
 describe( 'removeFormat', () => {
@@ -578,6 +727,162 @@ describe( 'removeFormat', () => {
 		};
 
 		expect( removeFormat( record, 'strong', 3, 6 ) ).toEqual( expected );
+	} );
+
+	it( 'should remove format for multiline', () => {
+		const record = {
+			value: [
+				{
+					formats: [
+						undefined,
+						undefined,
+						[ { type: 'em' } ],
+					],
+					text: 'one',
+				},
+				{
+					formats: [
+						[ { type: 'em' } ],
+						[ { type: 'em' } ],
+						[ { type: 'em' } ],
+					],
+					text: 'two',
+				},
+				{
+					formats: [
+						[ { type: 'em' } ],
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'three',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'four',
+				},
+			],
+			selection: {
+				start: [ 0, 2 ],
+				end: [ 2, 1 ],
+			},
+		};
+
+		const expected = {
+			value: [
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'one',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'two',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'three',
+				},
+				{
+					formats: [
+						undefined,
+						undefined,
+						undefined,
+						undefined,
+					],
+					text: 'four',
+				},
+			],
+			selection: {
+				start: [ 0, 2 ],
+				end: [ 2, 1 ],
+			},
+		};
+
+		expect( removeFormat( record, 'em' ) ).toEqual( expected );
+	} );
+} );
+
+describe( 'getActiveFormat', () => {
+	it( 'should get format by selection', () => {
+		const record = {
+			value: {
+				formats: [
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					[ { type: 'em' } ],
+					[ { type: 'em' } ],
+					[ { type: 'em' } ],
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+				],
+				text: 'one two three',
+			},
+			selection: {
+				start: 4,
+				end: 4,
+			},
+		};
+
+		const expected = { type: 'em' };
+
+		expect( getActiveFormat( record, 'em' ) ).toEqual( expected );
+	} );
+
+	it( 'should get format by selection for multiline', () => {
+		const record = {
+			value: [ {
+				formats: [
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					[ { type: 'em' } ],
+					[ { type: 'em' } ],
+					[ { type: 'em' } ],
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+				],
+				text: 'one two three',
+			} ],
+			selection: {
+				start: [ 0, 4 ],
+				end: [ 0, 4 ],
+			},
+		};
+
+		const expected = { type: 'em' };
+
+		expect( getActiveFormat( record, 'em' ) ).toEqual( expected );
 	} );
 } );
 
