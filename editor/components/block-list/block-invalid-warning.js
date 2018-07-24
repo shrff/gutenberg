@@ -8,6 +8,8 @@ import {
 	getBlockType,
 	createBlock,
 	rawHandler,
+	getBlockAttributes,
+	getSaveContent,
 } from '@wordpress/blocks';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -35,12 +37,13 @@ export class BlockInvalidWarning extends Component {
 	}
 
 	render() {
-		const { convertToHTML, convertToBlocks, convertToClassic, block } = this.props;
+		const { convertToHTML, convertToBlocks, convertToClassic, convertOverwrite, block } = this.props;
 		const hasHTMLBlock = !! getBlockType( 'core/html' );
 		const { compare } = this.state;
 		const hiddenActions = [
 			{ title: __( 'Convert to Blocks' ), onClick: convertToBlocks },
 			{ title: __( 'Convert to Classic Block' ), onClick: convertToClassic },
+			{ title: __( 'Overwrite' ), onClick: convertOverwrite },
 			{ title: __( 'Compare conversion' ), onClick: this.onCompare },
 		];
 
@@ -94,6 +97,9 @@ const blockToBlocks = ( block ) => rawHandler( {
 	HTML: block.originalContent,
 	mode: 'BLOCKS',
 } );
+const blockSave = ( block ) => createBlock( block.name,
+	getBlockAttributes( getBlockType( block.name ), getSaveContent( getBlockType( block.name ), block.attributes ) )
+);
 
 export default compose(
 	withSelect( () => ( {} ) ),
@@ -108,6 +114,9 @@ export default compose(
 			},
 			convertToBlocks() {
 				replaceBlock( block.uid, blockToBlocks( block ) );
+			},
+			convertOverwrite() {
+				replaceBlock( block.uid, blockSave( block ) );
 			},
 		};
 	} ),
