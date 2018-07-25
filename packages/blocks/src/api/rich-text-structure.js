@@ -74,7 +74,7 @@ function createRecord( element, range, settings = {} ) {
 	) {
 		return {
 			value: {
-				formats: Array( 1 ),
+				formats: [ undefined ],
 				text: '\n',
 			},
 			selection: {},
@@ -131,7 +131,7 @@ function createRecord( element, range, settings = {} ) {
 
 			let format;
 
-			if ( ! unwrapNodeMatch( node ) ) {
+			if ( ! unwrapNodeMatch( node ) && node.nodeName !== 'BR' ) {
 				const type = node.nodeName.toLowerCase();
 				const attributes = getAttributes( node, settings );
 
@@ -172,6 +172,10 @@ function createRecord( element, range, settings = {} ) {
 						} else {
 							formats[ index ] = value.formats[ i ];
 						}
+					}
+
+					if ( ! formats[ index ] ) {
+						formats[ index ] = undefined;
 					}
 				}
 			}
@@ -229,7 +233,13 @@ export function apply( value, current, multiline ) {
 	const range = current.ownerDocument.createRange();
 	const isCollapsed = startContainer === endContainer && startOffset === endOffset;
 
-	if ( isCollapsed && startOffset === 0 && startContainer.nodeType === TEXT_NODE ) {
+	if (
+		isCollapsed &&
+		startOffset === 0 &&
+		startContainer.previousSibling &&
+		startContainer.previousSibling.nodeType === ELEMENT_NODE &&
+		startContainer.previousSibling.nodeName !== 'BR'
+	) {
 		startContainer.insertData( 0, '\uFEFF' );
 		range.setStart( startContainer, 1 );
 		range.setEnd( endContainer, 1 );
@@ -357,18 +367,22 @@ export function toDOM( { value, selection = {} }, multiline, _tag ) {
 			} );
 		}
 
-		if ( pointer.nodeType === TEXT_NODE ) {
+		if ( character === '\n' ) {
+			pointer = pointer.parentNode.appendChild( doc.createElement( 'br' ) );
+		} else if ( pointer.nodeType === TEXT_NODE ) {
 			pointer.appendData( character );
 		} else {
 			pointer = pointer.parentNode.appendChild( doc.createTextNode( character ) );
 		}
 
 		if ( start === i ) {
-			startPath = createPathToNode( pointer, body, [ pointer.nodeValue.length - 1 ] );
+			const initialPath = pointer.nodeValue ? [ pointer.nodeValue.length - 1 ] : [];
+			startPath = createPathToNode( pointer, body, initialPath );
 		}
 
 		if ( end === i ) {
-			endPath = createPathToNode( pointer, body, [ pointer.nodeValue.length - 1 ] );
+			const initialPath = pointer.nodeValue ? [ pointer.nodeValue.length - 1 ] : [];
+			endPath = createPathToNode( pointer, body, initialPath );
 		}
 	}
 
@@ -418,21 +432,24 @@ export function isEmpty( record ) {
 	return text.length === 0 && formats.length === 0;
 }
 
-export function splice( { formats, text, selection, value }, start, deleteCount, textToInsert = '', formatsToInsert = [] ) {
+export function splice( { formats, text, selection, value }, start, deleteCount, textToInsert = '', formatsToInsert ) {
 	if ( value !== undefined ) {
+		start = start || selection.start;
+		deleteCount = deleteCount || selection.end - selection.start;
+
 		const diff = textToInsert.length - deleteCount;
 
 		return {
 			selection: {
-				start: selection.start + ( selection.start > start ? diff : 0 ),
-				end: selection.end + ( selection.end > start + diff ? diff : 0 ),
+				start: selection.start + ( selection.start >= start ? diff : 0 ),
+				end: selection.end + ( selection.end >= start ? diff : 0 ),
 			},
 			value: splice( value, start, deleteCount, textToInsert, formatsToInsert ),
 		};
 	}
 
 	if ( ! Array.isArray( formatsToInsert ) ) {
-		formatsToInsert = Array( textToInsert.length ).fill( [ formatsToInsert ] );
+		formatsToInsert = Array( textToInsert.length ).fill( formatsToInsert ? [ formatsToInsert ] : formatsToInsert );
 	}
 
 	formats.splice( start, deleteCount, ...formatsToInsert );

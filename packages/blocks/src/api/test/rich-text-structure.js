@@ -205,6 +205,64 @@ describe( 'create', () => {
 			},
 		} );
 	} );
+
+	it( 'should handle br', () => {
+		const element = createNode( '<p>test<br>test</p>' );
+		const range1 = {
+			startOffset: 1,
+			startContainer: element,
+			endOffset: 1,
+			endContainer: element,
+		};
+		const range2 = {
+			startOffset: 0,
+			startContainer: element.lastChild,
+			endOffset: 0,
+			endContainer: element.lastChild,
+		};
+
+		deepEqual( createWithSelection( element, range1, false ), {
+			value: {
+				formats: [
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+				],
+				text: 'test\ntest',
+			},
+			selection: {
+				start: 4,
+				end: 4,
+			},
+		} );
+
+		deepEqual( createWithSelection( element, range2, false ), {
+			value: {
+				formats: [
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+				],
+				text: 'test\ntest',
+			},
+			selection: {
+				start: 5,
+				end: 5,
+			},
+		} );
+	} );
 } );
 
 describe( 'toString', () => {
@@ -438,6 +496,39 @@ describe( 'splice', () => {
 		};
 
 		expect( splice( record, 2, 4, 'a', [ [ { type: 'strong' } ] ] ) ).toEqual( expected );
+	} );
+
+	it( 'should insert line break with selection', () => {
+		const record = {
+			value: {
+				formats: [
+					undefined,
+					undefined,
+				],
+				text: 'tt',
+			},
+			selection: {
+				start: 1,
+				end: 1,
+			},
+		};
+
+		const expected = {
+			value: {
+				formats: [
+					undefined,
+					undefined,
+					undefined,
+				],
+				text: 't\nt',
+			},
+			selection: {
+				start: 2,
+				end: 2,
+			},
+		};
+
+		expect( splice( record, undefined, 0, '\n' ) ).toEqual( expected );
 	} );
 
 	// it( 'should delete and insert multiline', () => {

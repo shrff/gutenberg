@@ -79,7 +79,7 @@ export default function() {
 			}
 
 			const start = match.index;
-			const end = start + match[ 1 ].length - 1;
+			const end = start + match[ 1 ].length;
 
 			record = splice( record, match.index + match[ 0 ].length - 1, 1 );
 			record = splice( record, start, 1 );

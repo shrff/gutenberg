@@ -86,7 +86,7 @@ export class RichText extends Component {
 		this.patterns = patterns.call( this );
 
 		this.state = {
-			selection: [],
+			selection: {},
 		};
 	}
 
@@ -544,7 +544,10 @@ export class RichText extends Component {
 				event.preventDefault();
 
 				if ( event.shiftKey || ! this.props.onSplit ) {
-					this.editor.execCommand( 'InsertLineBreak', false, event );
+					const { value } = this.props;
+					const { selection } = this.state;
+					const record = richTextStructure.splice( { value, selection }, undefined, 0, '\n' );
+					this.onChange( record );
 				} else {
 					this.splitContent();
 				}
